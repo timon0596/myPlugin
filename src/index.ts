@@ -1,6 +1,5 @@
 import "./index.pug"
-function log(str: string): string { 
-	return str
-}
+import './controller/controller.ts'
+import './style.sass'
 
-$("main .example .jquery").html(log("logger"))
+$('.jquery').timonSliderPlugin()
