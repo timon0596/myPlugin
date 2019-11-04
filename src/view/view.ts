@@ -32,30 +32,24 @@
 		let handles: any = $('.handle')
 
 		$(handles).each((i,el)=>{
-			i==0?$(el).addClass('first'):$(el).addClass('second')
-			console.log(el)
-
-
 			$(el).mousedown((e)=>{
-				$(el).css('z-index','10')
 				handleX[i]=e.clientX
-				$(el).mousemove((e)=>{
-										deltaX[i]=e.clientX-handleX[i]
-										console.log(deltaX[i])
-										handleX[i]=e.clientX
-										$(e.target).css({left: ()=>{
-																		return parseFloat($(e.target).css('left'))+deltaX[i]+'px'
-																	}
-										})		
-									}
-				)
-				
+				$('body').mousemove((ev)=>{
+					deltaX[i]=ev.clientX-handleX[i]
+					handleX[i]=ev.clientX
+					console.log()
+					$(el).css({left: ()=>{
+							return parseFloat($(el).css('left'))<0?0+'px':
+								parseFloat($(el).css('left'))>parseFloat($(el).parent().css('width'))-parseFloat($(el).css('width'))?
+								parseFloat($(el).parent().css('width'))-parseFloat($(el).css('width'))+'px':
+								parseFloat($(el).css('left'))+deltaX[i]+'px'
+						}
+					})
+				})
 			})
-			$('body').mouseup(()=>{
-				$(el).unbind('mousemove')
-				$(el).css('z-index','1')
+			$('body').mouseup(function(){
+				$('body').unbind('mousemove')
 			})
-
 		})
 		
 		return this;
