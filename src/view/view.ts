@@ -37,17 +37,22 @@
 				$('body').mousemove((ev)=>{
 					deltaX[i]=ev.clientX-handleX[i]
 					handleX[i]=ev.clientX
-					console.log()
+					console.log($(el).parent()[0].getBoundingClientRect())
 					$(el).css({left: ()=>{
-							return parseFloat($(el).css('left'))<0?0+'px':
-								parseFloat($(el).css('left'))>parseFloat($(el).parent().css('width'))-parseFloat($(el).css('width'))?
-								parseFloat($(el).parent().css('width'))-parseFloat($(el).css('width'))+'px':
-								parseFloat($(el).css('left'))+deltaX[i]+'px'
+							if(ev.clientX<=parseFloat($(el).parent()[0].getBoundingClientRect().left)){
+								return 0
+							}
+							if(ev.clientX>=parseFloat($(el).parent()[0].getBoundingClientRect().left+$(el).parent()[0].getBoundingClientRect().width)-parseFloat($(el).css('width'))){
+								return parseFloat($(el).parent()[0].getBoundingClientRect().width)-parseFloat($(el).css('width'))
+							}else{
+								return ev.clientX-parseFloat($(el).parent()[0].getBoundingClientRect().left)
+							}
 						}
 					})
 				})
 			})
 			$('body').mouseup(function(){
+
 				$('body').unbind('mousemove')
 			})
 		})
