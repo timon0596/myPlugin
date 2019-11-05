@@ -27,20 +27,22 @@
 
 		let handleX: Array<number> = [0,0]
 		let handlesMinMax: Array<number> = [0,0]
-
+		let handleBoundClickDistance: number
 		let handles: any = $('.handle')
 		$(handles).each((i,el)=>{
 			$(el).mousedown((e)=>{
+				handleBoundClickDistance=e.clientX-$(el)[0].getBoundingClientRect().left
+				console.log(handleBoundClickDistance)
 				$('body').mousemove((ev)=>{
 
 					$(el).css({left: ()=>{
-							if(ev.clientX<=$(el).parent()[0].getBoundingClientRect().left){
+							if(ev.clientX-handleBoundClickDistance<=$(el).parent()[0].getBoundingClientRect().left){
 								return 0
 							}
-							if(ev.clientX>=$(el).parent()[0].getBoundingClientRect().left+$(el).parent()[0].getBoundingClientRect().width-parseFloat($(el).css('width'))){
+							if(ev.clientX-handleBoundClickDistance>=$(el).parent()[0].getBoundingClientRect().left+$(el).parent()[0].getBoundingClientRect().width-parseFloat($(el).css('width'))){
 								return $(el).parent()[0].getBoundingClientRect().width-parseFloat($(el).css('width'))
 							}else{
-								return ev.clientX-$(el).parent()[0].getBoundingClientRect().left
+								return ev.clientX-$(el).parent()[0].getBoundingClientRect().left-handleBoundClickDistance
 							}
 						}
 					})
@@ -54,7 +56,6 @@
 						left: ()=>handlesMinMax[0],
 						width: ()=>handlesMinMax[1]-handlesMinMax[0]+parseFloat($(el).css('width'))
 					})
-					console.log($('.range').css(['left','width']))
 				})
 			})
 		})
