@@ -35,6 +35,34 @@ body
 		position: absolute
 		cursor: pointer
 		left: 0
+		display: -webkit-flex
+		display: -moz-flex
+		display: -ms-flex
+		display: -o-flex
+		display: flex
+		justify-content: center
+		.title
+			display: -webkit-flex
+			display: -moz-flex
+			display: -ms-flex
+			display: -o-flex
+			display: flex
+			justify-content: center
+			align-items: center
+			position: absolute
+			min-width: 20px
+			height: 20px
+			border: 3px solid white
+			background: rgb(176,225,198)
+			left: calc(- 3px - 50% + 10px)
+			top: -36px
+			&:before
+				content: ''
+				display: block
+				border: 10px solid transparent
+				border-top: 10px solid white
+				position: absolute
+				top: 100%
 	.range
 		display: block
 		position: absolute

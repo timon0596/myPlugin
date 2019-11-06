@@ -29,10 +29,19 @@
 		let handlesMinMax: Array<number> = [0,0]
 		let handleBoundClickDistance: number
 		let handles: any = $('.handle')
+		let mousedownTarget: object
+
+		let model: any = {
+			title: function (target: object , handles: any): void {
+				$(target).find('.title').html((100*parseInt($(target).css('left'))/(parseInt($('.slider').css('width'))-parseInt($(target).css('width')))).toFixed(0)+'%')
+			}
+		}
+
 		$(handles).each((i,el)=>{
 			$(el).mousedown((e)=>{
+				mousedownTarget=e.target
 				handleBoundClickDistance=e.clientX-$(el)[0].getBoundingClientRect().left
-				console.log(handleBoundClickDistance)
+				console.log(mousedownTarget)
 				$('body').mousemove((ev)=>{
 
 					$(el).css({left: ()=>{
@@ -56,13 +65,20 @@
 						left: ()=>handlesMinMax[0],
 						width: ()=>handlesMinMax[1]-handlesMinMax[0]+parseFloat($(el).css('width'))
 					})
+					model.title(mousedownTarget,handles)
+					
 				})
+
+
 			})
+
+
 		})
 		$('body').mouseup(function(){
 				$('body').unbind('mousemove')
 				
 			})
+		
 		return this;
 	}
 }(jQuery))
