@@ -26,10 +26,10 @@
 		
 		let handleX: Array<number> = [0,0]
 		let handlesMinMax: Array<number> = [0,0]
-		let handleBoundClickDistance: number
+		let fromHandleBoundClickDistance: number
 		let handles: any = $('.slider .handle')
 		let mousedownTarget: any
-
+		let mouseDownX: number
 		let model: any = {
 			title: function (target: object , handles: any): void {
 				$(target).find('.title').html((100*parseInt($(target).css('left'))/(parseInt($('.slider').css('width'))-parseInt($(target).css('width')))).toFixed(0))
@@ -47,7 +47,19 @@
 					$(...title).appendTo('.handle')
 				}
 			},
-			left: (target: any): void => {
+			left: (x: number): number => {
+				if( x<mousedownTarget.parentNode.getBoundingClientRect().left +
+					fromHandleBoundClickDistance ){
+					return mousedownTarget.style.borderWidth*2
+				}
+				if( x>mousedownTarget.parentNode.getBoundingClientRect().left + 
+					mousedownTarget.parentNode.getBoundingClientRect().width - 
+					mousedownTarget.getBoundingClientRect().width - 
+					mousedownTarget.style.borderWidth*2 +
+					fromHandleBoundClickDistance ){
+					return mousedownTarget.parentNode.getBoundingClientRect().width - mousedownTarget.getBoundingClientRect().width - mousedownTarget.style.borderWidth*2
+				}
+				return x - mousedownTarget.parentNode.getBoundingClientRect().left - fromHandleBoundClickDistance 
 			} 
 		}
 		let controller: any = {
@@ -56,6 +68,8 @@
 				$('body').mousedown((e)=>{
 					if(e.target==handles[0]||e.target==handles[1]){
 						mousedownTarget = e.target
+						mouseDownX = e.clientX
+						fromHandleBoundClickDistance = e.clientX - mousedownTarget.getBoundingClientRect().left
 						console.log(mousedownTarget.parentNode)
 					}
 				})
@@ -68,11 +82,7 @@
 
 						}
 						else{
-							$(mousedownTarget).css({left: () => {
-									return e.clientX - mousedownTarget.parentNode.getBoundingClientRect().left
-								}
-							})
-
+							$(mousedownTarget).css({ left: view.left(e.clientX) })
 						}
 					}
 				})
