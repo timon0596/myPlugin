@@ -1,5 +1,5 @@
 import "./index.pug"
 import './controller/controller.ts'
 import './style.sass'
-
-$('.jquery').timonSliderPlugin()
+let options: any = {}
+$('.jquery').timonSliderPlugin(options)

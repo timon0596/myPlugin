@@ -1,5 +1,5 @@
 (function($){
-	$.fn.timonSliderPlugin = function(options?: object){
+	$.fn.timonSliderPlugin = function(options: any){
 		var settings: any = $.extend({
 			vertical: false,
 			title: true,
@@ -23,66 +23,68 @@
 			$(...el).appendTo(slider)
 		})
 		$(slider).appendTo(this)
-		$(...title).appendTo('.handle')
-
+		
 		let handleX: Array<number> = [0,0]
 		let handlesMinMax: Array<number> = [0,0]
 		let handleBoundClickDistance: number
-		let handles: any = $('.handle')
-		let mousedownTarget: object
+		let handles: any = $('.slider .handle')
+		let mousedownTarget: any
 
 		let model: any = {
 			title: function (target: object , handles: any): void {
-				$(target).find('.title').html((100*parseInt($(target).css('left'))/(parseInt($('.slider').css('width'))-parseInt($(target).css('width')))).toFixed(0)+'%')
-			}
+				$(target).find('.title').html((100*parseInt($(target).css('left'))/(parseInt($('.slider').css('width'))-parseInt($(target).css('width')))).toFixed(0))
+			},
+			
 		}
-
-		$(handles).each((i,el)=>{
-			$(el).mousedown((e)=>{
-				mousedownTarget=e.target
-				handleBoundClickDistance=e.clientX-$(el)[0].getBoundingClientRect().left
-				console.log(mousedownTarget)
-				$('body').mousemove((ev)=>{
-
-					$(el).css({left: ()=>{
-							if(ev.clientX-handleBoundClickDistance<=$(el).parent()[0].getBoundingClientRect().left){
-								return 0
-							}
-							if(ev.clientX-handleBoundClickDistance>=$(el).parent()[0].getBoundingClientRect().left+$(el).parent()[0].getBoundingClientRect().width-parseFloat($(el).css('width'))){
-								return $(el).parent()[0].getBoundingClientRect().width-parseFloat($(el).css('width'))
-							}else{
-								return ev.clientX-$(el).parent()[0].getBoundingClientRect().left-handleBoundClickDistance
-							}
-						}
-					})
-					handleX[i]=parseFloat($(el).css('left'))
-					if(handleX[0]>handleX[1]){
-						[handlesMinMax[0],handlesMinMax[1]]=[handleX[1],handleX[0]]
-					}else{
-						[handlesMinMax[0],handlesMinMax[1]]=[handleX[0],handleX[1]]
+		let view: any = {
+			vertical: (options?: any): void => {
+				if(options.vertical){
+					this.find('.slider').css('transform', 'rotate(90deg)')
+				}
+			},
+			init: (settings: any): void => {
+				if(settings.title){
+					$(...title).appendTo('.handle')
+				}
+			},
+			left: (target: any): void => {
+			} 
+		}
+		let controller: any = {
+			init: (settings: any): void => {
+				view.init(settings)
+				$('body').mousedown((e)=>{
+					if(e.target==handles[0]||e.target==handles[1]){
+						mousedownTarget = e.target
+						console.log(mousedownTarget.parentNode)
 					}
-					$('.range').css({
-						left: ()=>handlesMinMax[0],
-						width: ()=>handlesMinMax[1]-handlesMinMax[0]+parseFloat($(el).css('width'))
-					})
-					model.title(mousedownTarget,handles)
-					
+				})
+				$('body').mouseup(()=>{
+					mousedownTarget = null	
+				})
+				$('body').mousemove((e)=>{
+					if(mousedownTarget){
+						if(settings.vertical){
+
+						}
+						else{
+							$(mousedownTarget).css({left: () => {
+									return e.clientX - mousedownTarget.parentNode.getBoundingClientRect().left
+								}
+							})
+
+						}
+					}
 				})
 
-
-			})
-
-
-		})
-		$('body').mouseup(function(){
-				$('body').unbind('mousemove')
-				
-			})
-		
+			}
+		}
+		controller.init(settings)
+					
 		return this;
 	}
 }(jQuery))
 interface JQuery {
-   timonSliderPlugin(): any
+   timonSliderPlugin(options: any): any
 }
 
