@@ -30,8 +30,12 @@
 		let fromHandleBoundClickDistanceY: number
 		let handles: any = $('.slider .handle')
 		handles[0].style.left = '0'
+		handles[0].style.bottom = '0'
 		if(handles[1]){
 			handles[1].style.left = '0'
+		}
+		if(handles[1]){
+			handles[1].style.bottom = '0'
 		}
 		let mousedownTarget: any
 		let mouseDownX: number
@@ -40,6 +44,7 @@
 			vertical: (options?: any): void => {
 				if(options.vertical){
 					this.find('.slider').addClass('vertical')
+					this.find('.slider .range').addClass('vertical')
 					
 
 				}
@@ -77,17 +82,17 @@
 						mousedownTarget.getBoundingClientRect().width + fromHandleBoundClickDistanceY
 			},
 			
-			range: () => {
+			range: (bound: string, size: string) => {
 				$('.slider .range').css({ 
-											left: () => { $(handles).each((i,el) => { handleX[i] = parseFloat(el.style.left) })
+											[bound]: () => { $(handles).each((i,el) => { handleX[i] = parseFloat(el.style[bound]) })
 															handlesMinMax = [...handleX]
 															if(handlesMinMax[0]>handlesMinMax[1]){ 
 																	[handlesMinMax[0],handlesMinMax[1]] = [handlesMinMax[1],handlesMinMax[0]] 
 																}
 															return 	handlesMinMax[0]
 														},
-											width:  () => {
-																return handlesMinMax[1] - handlesMinMax[0] + mousedownTarget.getBoundingClientRect().width
+											[size]:  () => {
+																return handlesMinMax[1] - handlesMinMax[0] + mousedownTarget.getBoundingClientRect()[size]
 															}
 										 })
 			}
@@ -113,11 +118,11 @@
 					if(mousedownTarget){
 						if(settings.vertical){
 							$(mousedownTarget).css({ bottom: view.handleOffsetVertical(e.clientY) })
-
+							view.range('bottom','height')
 						}
 						else{
 							$(mousedownTarget).css({ left: view.handleOffset(e.clientX) })
-							view.range()
+							view.range('left','width')
 
 						}
 					}
