@@ -4,46 +4,54 @@ const webpack = require('webpack');
 const HtmlWebpackPugPlugin = require('html-webpack-pug-plugin');
 
 // const autoprefixer = require('autoprefixer');
-module.exports={
+module.exports = {
+	
 	entry: './src/index.ts',
 	output: {
 		filename: 'main.js',
 		path: path.resolve(__dirname,'dist')
 	},devtool: 'source-map',
+	resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx']
+  },
 	module:{
 		rules: [{
 			test:/\.pug$/,
 			loader: 'pug-loader',
 			options: {pretty: true}
-		},{
+		},
+		{
 			test:/\.js$/,
 			loader: 'babel-loader',
-			exclude:'/node_modules/'},
+			exclude:'/node_modules/'
+		},
 		{
 	        test: /\.tsx?$/,
 	        loader: 'awesome-typescript-loader'
-	      },
-{
-    test: /\.(scss|sass)$/,
-    use: [{
-      loader: 'style-loader', // inject CSS to page
-    }, {
-      loader: 'css-loader', // translates CSS into CommonJS modules
-    }, {
-      loader: 'postcss-loader', // Run post css actions
-      options: {
-        plugins: function () { // post css plugins, can be exported to postcss.config.js
-          return [
-            require('precss'),
-            require('autoprefixer')
-          ];
-        }
-      }
-    }, {
-      loader: 'sass-loader' // compiles SASS to CSS
-    }]
-  },
-  {
+	    },
+		{
+		    test: /\.(scss|sass)$/,
+		    use: [
+				    {
+				      loader: 'style-loader', 
+				    }, {
+				      loader: 'css-loader', 
+				      loader: 'postcss-loader', 
+				      options: {
+				        plugins: function () {
+				          return [
+				            require('precss'),
+				            require('autoprefixer')
+				          ];
+				        }
+				      }
+				    },
+				    {
+				      loader: 'sass-loader' // compiles SASS to CSS
+				    }
+		    	 ]
+		  	},
+  		{	
 			test:/\.css$/,
 			use:[
 				"style-loader",
