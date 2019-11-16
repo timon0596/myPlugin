@@ -49,12 +49,10 @@ class ModelClass {
 	constructor(public settings: any, public parent: any){
 
 	}
-	setHandleParams(obj: any, e: any): any {
+	setHandleParams(obj: any, e: any): void {
 		if(e.target == this.parent.find('.slider .handle')[0]||e.target == this.parent.find('.slider .handle')[1]){
 				obj.handle = e.target.getBoundingClientRect()
 				obj.target = $(e.target)[0]
-				obj.handleLeft = parseFloat(obj.target.style.left)
-				obj.handleBottom = parseFloat(obj.target.style.bottom)
 				obj.slider = $(e.target).parent()[0].getBoundingClientRect()
 				obj.click=true
 				if(this.settings.params.vertical){
@@ -64,9 +62,8 @@ class ModelClass {
 					obj.fromBoundDistance = e.clientX - e.target.getBoundingClientRect().left	
 				}
 			}
-		return obj	
 	}
-	handleBot({handle, slider, mousemoveY, fromBoundDistance,handleBottom}: any): any {
+	handleBot({handle, slider, mousemoveY, fromBoundDistance}: any): number {
 		if(mousemoveY>slider.top+slider.height-fromBoundDistance){
 			return 0
 		}
@@ -77,6 +74,25 @@ class ModelClass {
 		return slider.height+Number((slider.top).toFixed(1))-Number((mousemoveY).toFixed(1)) - Number((fromBoundDistance).toFixed(1))
 		
 	}
+	handleLeft({handle, slider, mousemoveX, fromBoundDistance}: any): number {
+		if(mousemoveX < slider.left + fromBoundDistance){
+			return 0
+		}
+
+		if(mousemoveX>slider.left + slider.width - handle.width + fromBoundDistance){
+			return slider.width - handle.width
+		}
+		console.log(mousemoveX - fromBoundDistance)
+		return mousemoveX - fromBoundDistance - slider.left
+	}
+	handleMove(o: any): void{
+		if(this.settings.params.vertical){
+			$(o.target).css({bottom: this.handleBot(o)})
+		}
+		else{
+			$(o.target).css({left: this.handleLeft(o)})
+		}
+	}
 }
 (function($){
 	$.fn.timonSliderPlugin = function(options?: any){
@@ -84,7 +100,7 @@ class ModelClass {
 		var settings: any = $.extend({
 			params: 
 				{
-					vertical: true,
+					vertical: false,
 					title: true,
 					range: true,
 					interval: true
@@ -101,13 +117,9 @@ class ModelClass {
 		})
 		$('body').mousemove((e)=>{
 			if(obj.click){
-				
 				obj.mousemoveY = e.clientY
 				obj.mousemoveX = e.clientX
-				obj.handleBottom = parseFloat(obj.target.style.bottom)
-				obj.handleLeft = parseFloat(obj.target.style.left)
-				$(obj.target).css({bottom: model.handleBot(obj)})
-
+				model.handleMove(obj)
 			}
 		})
 		$('body').mouseup(()=>{
