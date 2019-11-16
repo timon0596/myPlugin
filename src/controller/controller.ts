@@ -49,7 +49,23 @@ class ModelClass {
 	constructor(public settings: any, public parent: any){
 
 	}
-	
+	setHandleParams(obj: any, e: any): any {
+		if(e.target == this.parent.find('.slider .handle')[0]||e.target == this.parent.find('.slider .handle')[1]){
+				obj.handle = e.target.getBoundingClientRect()
+				obj.target = $(e.target)[0]
+				obj.handleLeft = parseFloat(obj.target.style.left)
+				obj.handleBottom = parseFloat(obj.target.style.bottom)
+				obj.slider = $(e.target).parent()[0].getBoundingClientRect()
+				obj.click=true
+				if(this.settings.params.vertical){
+					obj.fromBoundDistance = e.target.getBoundingClientRect().top + e.target.getBoundingClientRect().height - e.clientY
+				}
+				else{
+					obj.fromBoundDistance = e.clientX - e.target.getBoundingClientRect().left	
+				}
+			}
+		return obj	
+	}
 	handleBot({handle, slider, mousemoveY, fromBoundDistance,handleBottom}: any): any {
 		if(mousemoveY>slider.top+slider.height-fromBoundDistance){
 			return 0
@@ -78,34 +94,24 @@ class ModelClass {
 		        }, options );
 		let view = new ViewClass(settings, this)
 		let model = new ModelClass(settings, this)
-		let obj: any = {
-			}
-			let click: boolean
+		let obj: any = {}
 		view.render()
 		$('body').mousedown((e)=>{
-			if(e.target == this.find('.slider .handle')[0]||e.target == this.find('.slider .handle')[1]){
-				obj.handle = e.target.getBoundingClientRect()
-				obj.target = $(e.target)[0]
-				obj.handleBottom = parseFloat(obj.target.style.bottom)
-				obj.slider = $(e.target).parent()[0].getBoundingClientRect()
-				obj.fromBoundDistance = e.target.getBoundingClientRect().top + e.target.getBoundingClientRect().height - e.clientY
-				
-				click=true
-			}
-
+			model.setHandleParams(obj,e)
 		})
 		$('body').mousemove((e)=>{
-			if(click){
+			if(obj.click){
 				
 				obj.mousemoveY = e.clientY
+				obj.mousemoveX = e.clientX
 				obj.handleBottom = parseFloat(obj.target.style.bottom)
-				console.log(obj.handleBottom)
+				obj.handleLeft = parseFloat(obj.target.style.left)
 				$(obj.target).css({bottom: model.handleBot(obj)})
 
 			}
 		})
 		$('body').mouseup(()=>{
-			click=false
+			obj.click=false
 		})
 		return this;
 	}
