@@ -63,6 +63,7 @@ class ModelClass {
 				}
 			}
 	}
+
 	handleBot({handle, slider, mousemoveY, fromBoundDistance}: any): number {
 		if(mousemoveY>slider.top+slider.height-fromBoundDistance){
 			return 0
@@ -71,9 +72,11 @@ class ModelClass {
 		if(mousemoveY<slider.top+handle.height-fromBoundDistance){
 			return slider.height-handle.height
 		}
+
 		return slider.height+Number((slider.top).toFixed(1))-Number((mousemoveY).toFixed(1)) - Number((fromBoundDistance).toFixed(1))
 		
 	}
+
 	handleLeft({handle, slider, mousemoveX, fromBoundDistance}: any): number {
 		if(mousemoveX < slider.left + fromBoundDistance){
 			return 0
@@ -82,9 +85,10 @@ class ModelClass {
 		if(mousemoveX>slider.left + slider.width - handle.width + fromBoundDistance){
 			return slider.width - handle.width
 		}
-		console.log(mousemoveX - fromBoundDistance)
+
 		return mousemoveX - fromBoundDistance - slider.left
 	}
+
 	handleMove(o: any): void{
 		if(this.settings.params.vertical){
 			$(o.target).css({bottom: this.handleBot(o)})
@@ -93,6 +97,21 @@ class ModelClass {
 			$(o.target).css({left: this.handleLeft(o)})
 		}
 	}
+
+	range({range,bound,size,handleWidth,handles,min,max}: any): void {
+		
+			max = parseFloat(String($(handles[0]).css(bound)))
+			if(handles[1]){
+				min = parseFloat(String($(handles[0]).css(bound)))
+				max = parseFloat(String($(handles[1]).css(bound)))
+				if(min > max){
+					[min , max] = [max , min]
+				}
+			}
+			range.style[bound] = min + 'px'
+			range.style[size] = max - min + handleWidth + 'px'			
+		
+	}
 }
 (function($){
 	$.fn.timonSliderPlugin = function(options?: any){
@@ -100,18 +119,41 @@ class ModelClass {
 		var settings: any = $.extend({
 			params: 
 				{
-					vertical: false,
+					vertical: true,
 					title: true,
-					range: true,
-					interval: true
+					range: false,
+					interval: false
 				},
 			step: 1
-			
 		        }, options );
-		let view = new ViewClass(settings, this)
-		let model = new ModelClass(settings, this)
-		let obj: any = {}
+
+		let view = new ViewClass(settings, $this)
+		let model = new ModelClass(settings, $this)
 		view.render()
+		
+		let $range = this.find('.slider .range')[0]
+		let $handles = this.find('.slider .handle')
+		
+		let obj: any = {}
+		let range : any = 
+		{
+			bound: 'left',
+			size: 'width',
+			min: 0,
+			max: 0,
+			handleWidth: 20,
+			range: $range,
+			handles: $handles
+		}
+		if(settings.params.vertical){
+			range.bound='bottom'
+			range.size='height'
+		}
+		else{
+			range.bound='left'
+			range.size='width'
+		}
+
 		$('body').mousedown((e)=>{
 			model.setHandleParams(obj,e)
 		})
@@ -120,11 +162,16 @@ class ModelClass {
 				obj.mousemoveY = e.clientY
 				obj.mousemoveX = e.clientX
 				model.handleMove(obj)
+				if(settings.params.range){
+					model.range(range)
+				}
+
 			}
 		})
 		$('body').mouseup(()=>{
 			obj.click=false
 		})
+
 		return this;
 	}
 }(jQuery))
