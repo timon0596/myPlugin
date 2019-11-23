@@ -7,13 +7,25 @@ body
 	display: -ms-flex
 	display: -o-flex
 	display: flex
+	flex-direction: column
 	justify-content: center
 	align-items: center
 	width: 150px
 	height: 150px
 	padding: 20px
 	box-sizing: border-box
+	color: rgba(31, 32, 65, .7)
 	background: rgba(31, 32, 65, 0.05)
+	.title
+		display: -webkit-flex
+		display: -moz-flex
+		display: -ms-flex
+		display: -o-flex
+		display: flex
+		justify-content: center
+		width: 100%
+		margin-top: 10px
+
 .slider.vertical
 	width: 20px
 	height: 100%
@@ -21,7 +33,16 @@ body
 	.range
 		width: 100%
 		height: 0px
-
+	.fromTo
+		position: absolute
+		flex-direction: column
+		height: 100%
+		left: -100%
+		top: 0px
+		&>*
+			margin: 5px
+			margin-left: 0px
+			margin-right: 0px
 .slider
 	width: 100%
 	height: 20px
@@ -60,3 +81,19 @@ body
 		border-radius: 10px
 		left: 0px
 		z-index: 1
+	.fromTo
+		position: absolute
+		display: -webkit-flex
+		display: -moz-flex
+		display: -ms-flex
+		display: -o-flex
+		display: flex
+		justify-content: space-between
+		align-items: center
+		width: 100%
+		font-size: 10px
+		top: -60%
+		&>*
+			margin: 5px
+			margin-bottom: 0px
+			margin-top: 0px

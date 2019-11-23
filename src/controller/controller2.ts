@@ -17,9 +17,10 @@ class ViewClass {
 	 
 	constructor (public settings: any, public parent: any) {
 	}
-	baseSlider = $(this.slider).append(this.handle);
+	baseSlider = $(this.slider).append(this.handle)
 							
 	baseTemplate = $(this.wrapper).append(this.baseSlider)
+
 	
 	params: any = {
 		interval: (s: boolean) : void => {
@@ -45,10 +46,25 @@ class ViewClass {
 	}
 
 	render() : void {
+
 			Object.keys(this.settings.params).forEach((el,i):void=>{
 				this.params[el](this.settings.params[el])
 			})
 			this.parent.append(this.baseTemplate)
+				
+			this.parent.find('.title').html((()=>{
+				if(this.settings.initialValues){
+					if(this.settings.params.interval){
+						return `${this.settings.initialValues[0]} - ${this.settings.initialValues[1]}`
+					}
+					else{
+						return this.settings.initialValues[0]
+					}
+				}
+				else{
+					return this.settings.fromTo[0]
+				}
+			})())
 	}
 }
 
@@ -57,14 +73,14 @@ class ModelClass {
 
 	}
 	step({step,fromTo: [from,to],sliderSize,handleWidth,values}: any): number {
-		let steps: number = (to-from)/step
+		let steps: number = Math.abs(to-from)/step
 		if(values){
 			steps = values.length
 		}
 		let stepSize: number = (sliderSize-handleWidth)/steps
 		return stepSize
 	}
-	handlePosition({bound,size,stepSize,mousePos,fromHandleBoundDistance: bd,handle,slider,target}: handlePosObj): void{
+	handlePosition({bound,size,stepSize,mousePos,fromHandleBoundDistance: bd,handle,slider,target}: handlePosObj): number{
 		let handlePos: number
 		let steps = Math.round((mousePos - bd)/stepSize)
 		handlePos = steps*stepSize
@@ -75,7 +91,7 @@ class ModelClass {
 			handlePos = slider[size] - handle[size]
 		}
 		target.style[bound] = handlePos + 'px'
-		console.log(Math.round(mousePos - bd))
+		return handlePos
 
 	}
 	range({range,bound,size,handleWidth,handles,min,max}: any): void {
@@ -91,6 +107,17 @@ class ModelClass {
 		range.style[bound] = min + 'px'
 		range.style[size] = max - min + handleWidth + 'px'			
 	}
+	title({title,handlePos,stepSize,fromTo,step}:any): void{
+		let titleValue: number
+		if(handlePos==0){
+			titleValue = fromTo[0]
+		}
+		else{
+			titleValue = Math.round(fromTo[0] + handlePos/stepSize*step)	
+		}
+		
+		title.html(titleValue)
+	}
 }
 
 (function($){
@@ -98,8 +125,8 @@ class ModelClass {
 		let $this = this
 		var settings: any = $.extend({
 			step: 10,
-			fromTo: [0,100],
-			initialRange: [0,100],
+			fromTo: [20,100],
+			initialValues: null,
 			values: null,
 			params: 
 				{
@@ -135,12 +162,12 @@ class ModelClass {
 			handles: $handles
 		}
 
-		let $sliderSize = parseFloat(this.find('.slider').css(rangeParametresObj.size))
+		let sliderSize = parseFloat(this.find('.slider').css(rangeParametresObj.size))
 
 		let stepSizeParametresObj = {
 			...settings, 
 			handleWidth: 20, 
-			sliderSize: $sliderSize
+			sliderSize
 		}
 
 		let stepSize = model.step(stepSizeParametresObj)
@@ -154,6 +181,14 @@ class ModelClass {
 			handle: null,
 			slider,
 			target: null
+		}
+		let title = this.find('.title')
+		let titleParametresObj = {
+			title,
+			stepSize,
+			step: settings.step,
+			handlePos: 0,
+			fromTo: settings.fromTo 
 		}
 
 
@@ -192,7 +227,8 @@ class ModelClass {
 					handlePositionObj.mousePos = e.clientX - slider.left
 				}
 				
-				model.handlePosition(handlePositionObj)
+				titleParametresObj.handlePos = model.handlePosition(handlePositionObj)
+				model.title(titleParametresObj)
 
 			}
 			
