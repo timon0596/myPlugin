@@ -70,12 +70,15 @@ class ViewClass {
 
 class ModelClass {
 	constructor(public settings: any, public parent: any){
-
+		if(this.settings.values){
+			this.settings.fromTo[0] = this.settings.values[0]
+			this.settings.fromTo[1] = this.settings.values[this.settings.values.length - 1]
+		}
 	}
 	step({step,fromTo: [from,to],sliderSize,handleWidth,values}: any): number {
 		let steps: number = Math.abs(to-from)/step
 		if(values){
-			steps = values.length
+			steps = values.length - 1
 		}
 		let stepSize: number = (sliderSize-handleWidth)/steps
 		return stepSize
@@ -113,10 +116,28 @@ class ModelClass {
 			titleValue = fromTo[0]
 		}
 		else{
-			titleValue = Math.round(fromTo[0] + handlePos/stepSize*step)	
+			if(this.settings.values){
+				titleValue = this.settings.values[handlePos/stepSize]
+			}
+			else{
+				titleValue = Math.round(fromTo[0] + handlePos/stepSize*step)
+			}
+		}
+		title.html(titleValue)
+	}
+	intialValues(h_p_obj: handlePosObj,t_p_obj: any){
+		if(this.settings.params.interval){
+			
+		}
+		else if(this.settings.values.indexOf(this.settings.initialValues)!=-1){
+			h_p_obj.target = this.parent.find('.handle')[0]
+			h_p_obj.handle = h_p_obj.target.getBoundingClientRect()
+			h_p_obj.fromHandleBoundDistance = 0
+			h_p_obj.mousePos = this.settings.values.indexOf(this.settings.initialValues)*h_p_obj.stepSize
+			t_p_obj.handlePos = this.handlePosition(h_p_obj)
+			this.title(t_p_obj)
 		}
 		
-		title.html(titleValue)
 	}
 }
 
@@ -125,9 +146,9 @@ class ModelClass {
 		let $this = this
 		var settings: any = $.extend({
 			step: 10,
-			fromTo: [20,100],
-			initialValues: null,
-			values: null,
+			fromTo: [1,1000],
+			initialValues: 'march',
+			values: ['jan','feb','march','april','may','june'],
 			params: 
 				{
 					vertical: true,
@@ -194,7 +215,7 @@ class ModelClass {
 
 		
 		let click: boolean = false
-
+		model.intialValues(handlePositionObj,titleParametresObj)
 		$('body').mousedown((e)=>{
 			if(e.target == $handles[0]||$handles[1]){
 
