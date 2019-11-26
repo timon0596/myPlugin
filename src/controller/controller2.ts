@@ -60,6 +60,11 @@ class View {
 
 	handleRender({handle,bound,fromBorderDistance:bd,mouseposition,stepsize}:any):void{
 		handle.style[bound] = Math.round((mouseposition - bd)/stepsize)*stepsize + 'px'
+		console.log(handle)
+		console.log(bound)
+		console.log(bd)
+		console.log(mouseposition)
+		console.log(handle.style[bound])
 	}
 
 	range({range,bound,dimension,rangefrom,rangeto,handle}: any): void{
@@ -94,16 +99,25 @@ class Model {
 		this.parametresInit(p)
 	}
 
-	changeHandleParametres(p: parametres,e: any): parametres{
-		if(this.settings.vertical){
-			p.fromBorderDistance = p.handle.getBoundingClientRect().top + p.handle.getBoundingClientRect().height - e.clientY
-			p.mouseposition = p.slider.getBoundingClientRect().top + p.slidersize - e.clientY
+	changeHandleParametres(p: parametres,e: any): void{
+		if(e.type == 'mousemove'){
+			if(this.settings.vertical){
+				p.mouseposition = p.slider.getBoundingClientRect().top + p.slidersize - e.clientY
+			}
+			else{
+				p.mouseposition = e.clientX - p.slider.getBoundingClientRect().left
+			}
 		}
-		else{
-			p.fromBorderDistance = e.clientX - p.handle.getBoundingClientRect().left
-			p.mouseposition = e.clientX - p.slider.getBoundingClientRect().left
+		if(e.type == 'mousedown'){
+				p.handle = e.target
+			if(this.settings.vertical){
+				p.fromBorderDistance = p.handle.getBoundingClientRect().top + p.handle.getBoundingClientRect().height - e.clientY
+			}
+			else{
+				p.fromBorderDistance = e.clientX - p.handle.getBoundingClientRect().left
+			}
 		}
-		return p
+		
 	}
 
 	changeTitleParametres(){}
@@ -184,16 +198,15 @@ class Model {
 
 			if(e.target == $this.find('.handle')[0]||e.target == $this.find('.handle')[1]){
 				click = true
-				parametres.handle = e.target
+				model.changeHandleParametres(parametres,e)
 			}
 
 		})
 				
 		$('body').mousemove((e)=>{
 			if(click){
-				view.handleRender(model.changeHandleParametres(parametres,e))
-				console.log(parametres.mouseposition)
-				console.log(parametres.fromBorderDistance)
+				model.changeHandleParametres(parametres,e)
+				view.handleRender(parametres)
 			}
 		})
 
