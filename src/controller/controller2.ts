@@ -157,13 +157,13 @@ class Model {
 
 			p.stepsize = (p.slidersize - p.handle.getBoundingClientRect()[p.dimension])/(Number(((p.values.length - 1)/p.step).toFixed(2)))
 
-			if(typeof p.initialvalue[0] != 'string'){
+			if(typeof p.initialvalue[0] != 'string' || typeof p.initialvalue[1] != 'string'){
 				if(this.settings.interval){
-					p.intialvalue[0] = p.values[0]
-					p.intialvalue[1] = p.values[1]
+					p.initialvalue[0] = p.values[0]
+					p.initialvalue[1] = p.values[0]
 				}
 				else{
-					p.intialvalue[0] = p.values[0]
+					p.initialvalue[0] = p.values[0]
 				}
 			}
 			if(typeof p.from!='string' || typeof p.to!='string'){
@@ -198,8 +198,8 @@ class Model {
 		var settings: any = $.extend({
 			step: 1,
 			fromTo: [0,1000],
-			initialValue: [100,200],
-			values: null,
+			initialValue: ['aaaaaaaa','ddddddddd'],
+			values: ['aaa','aaaaaaaa','aaaaaaaaaaaaaaa','ddddddddd','vvvvvvvvvvvv'],
 			vertical: false,
 			title: true,
 			range: false,
