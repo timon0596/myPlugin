@@ -58,13 +58,10 @@ class View {
 		}
 	}
 
-	handleRender({handle,bound,fromBorderDistance:bd,mouseposition,stepsize}:any):void{
-		handle.style[bound] = Math.round((mouseposition - bd)/stepsize)*stepsize + 'px'
-		console.log(handle)
-		console.log(bound)
-		console.log(bd)
-		console.log(mouseposition)
-		console.log(handle.style[bound])
+	handleRender({handle,bound,fromBorderDistance:bd,mouseposition,stepsize,slidersize,dimension}:any):void{
+		handle.style[bound] = mouseposition - bd < 0 ? 0 + 'px' : mouseposition - bd  > slidersize - handle.getBoundingClientRect()[dimension] ?
+		slidersize - handle.getBoundingClientRect()[dimension] + 'px' : Math.round((mouseposition - bd)/stepsize)*stepsize + 'px'
+		
 	}
 
 	range({range,bound,dimension,rangefrom,rangeto,handle}: any): void{
@@ -134,7 +131,7 @@ class Model {
 
 		}
 		else{
-			p.stepsize = p.slidersize/((p.to - p.from)/p.step)
+			p.stepsize = (p.slidersize - p.handle.getBoundingClientRect()[p.dimension])/((p.to - p.from)/p.step)
 		}
 		p.range = this.parent.find('.range')[0]
 		p.title = this.parent.find('.title')
@@ -145,7 +142,7 @@ class Model {
 	$.fn.timonSliderPlugin = function(options?: any){
 		let $this = this
 		var settings: any = $.extend({
-			step: 10,
+			step: 100,
 			fromTo: [0,1000],
 			initialValue: [200,500],
 			values: null,
