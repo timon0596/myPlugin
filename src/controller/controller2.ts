@@ -16,7 +16,9 @@ type parametres = {
 	from: number|string,
 	to: number|string,
 	values: Array<string>|null,
-	title: any
+	title: any,
+	min: number,
+	max: number
 }
 class View {
 	wrapper = '<div class="slider-wrapper">'
@@ -69,13 +71,23 @@ class View {
 		range.style[dimension] = rangeto - rangefrom +  handle.style[dimension] + 'px'
 	}
 
-	title({handleposition,slidersize,from,to,values,stepsize,title}: any){
+	title({handleposition,slidersize,from,to,values,stepsize,title,min,max}: any){
 		let value
-		if(typeof from == 'number'){
-			value = handleposition/slidersize*(to - from) + from
+		if(this.settings.interval){
+			if(typeof from == 'number'){
+				value = `${Math.round(min)} — ${Math.round(max)}`
+			}
+			else{
+				value = `${values[min]} — ${values[max]}`
+			}
 		}
 		else{
-			value = values[handleposition/stepsize]
+			if(typeof from == 'number'){
+				value = handleposition/slidersize*(to - from) + from
+			}
+			else{
+				value = values[handleposition/stepsize]
+			}
 		}
 		title.html(value)
 	}
@@ -97,6 +109,20 @@ class Model {
 	}
 
 	changeHandleParametres(p: parametres,e: any): void{
+		if(this.settings.interval){
+			if(p.values){
+				p.min = parseFloat(this.parent.find('.handle')[0].style[p.bound])/p.stepsize
+				p.max = parseFloat(this.parent.find('.handle')[1].style[p.bound])/p.stepsize
+			}else{
+				p.min = parseFloat(String($(this.parent.find('.handle')[0]).css(p.bound)))/p.stepsize + Number(p.from)
+				p.max = parseFloat(String($(this.parent.find('.handle')[1]).css(p.bound)))/p.stepsize + Number(p.from)
+			}
+
+			p.min>p.max?[p.min,p.max] = [p.max,p.min]:0
+			console.log(p.min)
+			console.log(p.max)
+		}
+
 		if(e.type == 'mousemove'){
 			if(this.settings.vertical){
 				p.mouseposition = p.slider.getBoundingClientRect().top + p.slidersize - e.clientY
@@ -129,12 +155,40 @@ class Model {
 		p.handle = this.parent.find('.handle')[0]
 		if(p.values){
 
+			p.stepsize = (p.slidersize - p.handle.getBoundingClientRect()[p.dimension])/(Number(((p.values.length - 1)/p.step).toFixed(2)))
+
+			if(typeof p.initialvalue[0] != 'string'){
+				if(this.settings.interval){
+					p.intialvalue[0] = p.values[0]
+					p.intialvalue[1] = p.values[1]
+				}
+				else{
+					p.intialvalue[0] = p.values[0]
+				}
+			}
+			if(typeof p.from!='string' || typeof p.to!='string'){
+				p.from = p.values[0]
+				p.to = p.values[p.values.length - 1]
+			}
 		}
 		else{
 			p.stepsize = (p.slidersize - p.handle.getBoundingClientRect()[p.dimension])/((p.to - p.from)/p.step)
 		}
 		p.range = this.parent.find('.range')[0]
 		p.title = this.parent.find('.title')
+		if(this.settings.interval){
+			if(p.values){
+				p.min = parseFloat(this.parent.find('.handle')[0].style[p.bound])/p.stepsize
+				p.max = parseFloat(this.parent.find('.handle')[1].style[p.bound])/p.stepsize
+			}else{
+				p.min = parseFloat(String($(this.parent.find('.handle')[0]).css(p.bound)))/p.stepsize + parseFloat(p.from)
+				p.max = parseFloat(String($(this.parent.find('.handle')[1]).css(p.bound)))/p.stepsize + parseFloat(p.from)
+			}
+
+			p.min>p.max?[p.min,p.max] = [p.max,p.min]:0
+			console.log(p.min)
+			console.log(p.max)
+		}
 	}
 }
 
@@ -142,9 +196,9 @@ class Model {
 	$.fn.timonSliderPlugin = function(options?: any){
 		let $this = this
 		var settings: any = $.extend({
-			step: 100,
+			step: 1,
 			fromTo: [0,1000],
-			initialValue: [200,500],
+			initialValue: [100,200],
 			values: null,
 			vertical: false,
 			title: true,
@@ -170,7 +224,9 @@ class Model {
 			from: settings.fromTo[0],
 			to: settings.fromTo[1],
 			values: settings.values,
-			title: null
+			title: null,
+			min: 0,
+			max: 0
 		}
 
 		let view = new View(settings,$this)
@@ -188,6 +244,8 @@ class Model {
 			}
 			view.handleRender(parametres)
 		})
+			model.changeHandleParametres(parametres,0)
+			view.title(parametres)
 		//-------------------------------------------INITIAL--VALUES-----------------------------
 		let click: boolean = false
 
@@ -204,6 +262,7 @@ class Model {
 			if(click){
 				model.changeHandleParametres(parametres,e)
 				view.handleRender(parametres)
+				view.title(parametres)
 			}
 		})
 
