@@ -110,17 +110,16 @@ class Model {
 
 	changeHandleParametres(p: parametres,e: any): void{
 		if(this.settings.interval){
-			if(p.values){
+			if(p.values!=null&&p.values!=undefined){
 				p.min = parseFloat(this.parent.find('.handle')[0].style[p.bound])/p.stepsize
 				p.max = parseFloat(this.parent.find('.handle')[1].style[p.bound])/p.stepsize
 			}else{
-				p.min = parseFloat(String($(this.parent.find('.handle')[0]).css(p.bound)))/p.stepsize + Number(p.from)
-				p.max = parseFloat(String($(this.parent.find('.handle')[1]).css(p.bound)))/p.stepsize + Number(p.from)
+				p.min = parseFloat(String($(this.parent.find('.handle')[0]).css(p.bound)))/p.stepsize*p.step + Number(p.from)
+				p.max = parseFloat(String($(this.parent.find('.handle')[1]).css(p.bound)))/p.stepsize*p.step + Number(p.from)
 			}
 
 			p.min>p.max?[p.min,p.max] = [p.max,p.min]:0
-			console.log(p.min)
-			console.log(p.max)
+			
 		}
 
 		if(e.type == 'mousemove'){
@@ -155,7 +154,7 @@ class Model {
 		p.handle = this.parent.find('.handle')[0]
 		if(p.values){
 
-			p.stepsize = (p.slidersize - p.handle.getBoundingClientRect()[p.dimension])/(Number(((p.values.length - 1)/p.step).toFixed(2)))
+			p.stepsize = (p.slidersize - p.handle.getBoundingClientRect()[p.dimension])/(p.values.length-1)
 
 			if(typeof p.initialvalue[0] != 'string' || typeof p.initialvalue[1] != 'string'){
 				if(this.settings.interval){
@@ -177,17 +176,16 @@ class Model {
 		p.range = this.parent.find('.range')[0]
 		p.title = this.parent.find('.title')
 		if(this.settings.interval){
-			if(p.values){
+			if(p.values!=null&&p.values!=undefined){
 				p.min = parseFloat(this.parent.find('.handle')[0].style[p.bound])/p.stepsize
 				p.max = parseFloat(this.parent.find('.handle')[1].style[p.bound])/p.stepsize
 			}else{
-				p.min = parseFloat(String($(this.parent.find('.handle')[0]).css(p.bound)))/p.stepsize + parseFloat(p.from)
-				p.max = parseFloat(String($(this.parent.find('.handle')[1]).css(p.bound)))/p.stepsize + parseFloat(p.from)
+				p.min = parseFloat(String($(this.parent.find('.handle')[0]).css(p.bound)))/p.stepsize*p.step + Number(p.from)
+				p.max = parseFloat(String($(this.parent.find('.handle')[1]).css(p.bound)))/p.stepsize*p.step + Number(p.from)
 			}
 
 			p.min>p.max?[p.min,p.max] = [p.max,p.min]:0
-			console.log(p.min)
-			console.log(p.max)
+			console.log(p.stepsize)
 		}
 	}
 }
@@ -196,10 +194,10 @@ class Model {
 	$.fn.timonSliderPlugin = function(options?: any){
 		let $this = this
 		var settings: any = $.extend({
-			step: 1,
+			step: 30,
 			fromTo: [0,1000],
-			initialValue: ['aaaaaaaa','ddddddddd'],
-			values: ['aaa','aaaaaaaa','aaaaaaaaaaaaaaa','ddddddddd','vvvvvvvvvvvv'],
+			initialValue: ['feb','apr'],
+			values: ["jan",'feb','march','apr','may','june'],
 			vertical: false,
 			title: true,
 			range: false,
