@@ -1,99 +1,62 @@
-body
-	height: 100vh
-.test
-.slider-wrapper
+$slider: #b5e7a0
+$handle: #86af49
+$brd: #e3eaa7
+.slider1
 	display: -webkit-flex
 	display: -moz-flex
 	display: -ms-flex
 	display: -o-flex
 	display: flex
-	flex-direction: column
 	justify-content: center
+.slider
+	width: 300px
+	height: 20px
+	background: $slider
+	display: -webkit-flex
+	display: -moz-flex
+	display: -ms-flex
+	display: -o-flex
+	display: flex
 	align-items: center
-	width: 150px
-	height: 150px
-	padding: 20px
-	box-sizing: border-box
-	color: rgba(31, 32, 65, .7)
-	background: rgba(31, 32, 65, 0.05)
-	.title
-		display: -webkit-flex
-		display: -moz-flex
-		display: -ms-flex
-		display: -o-flex
-		display: flex
-		justify-content: center
-		min-width: 100%
-		margin-top: 10px
-
+	.slider__axis
+		width: 100%
+		position: relative
+		.handle
+			position: absolute
+			left: 0
+			width: 20px
+			height: 20px
+			background: $handle
+			border: 5px solid $brd
+			border-radius: 50%
+			transform-origin: 50% 0
+			transform: translate(-50%,-50%)
+			.title__wrapper
+				position: relative
+				width: 100%
+				height: 100%
+				.title
+					background: $brd
+					position: absolute
+					left: 50%
+					top: -120%
+					transform-origin: 50% 50%
+					transform: translate(-50%,0)
 .slider.vertical
 	width: 20px
-	height: 100%
-	flex-direction: column-reverse
-	.range
-		width: 100%
-		height: 0px
-	.fromTo
-		position: absolute
-		flex-direction: column
+	height: 300px
+	flex-direction: column
+	.slider__axis
 		height: 100%
-		left: -100%
-		top: 0px
-		&>*
-			margin: 5px
-			margin-left: 0px
-			margin-right: 0px
-.slider
-	width: 100%
-	height: 20px
-	background: rgba(111, 207, 151, .5)
-	display: -webkit-flex
-	display: -moz-flex
-	display: -ms-flex
-	display: -o-flex
-	display: flex
-	align-items: center
-	border-radius: 10px
-	position: relative
-	.handle
-		width: 20px
-		height: 20px
-		background: rgba(111, 207, 151, 1)
-		border: 3px solid white
-		box-sizing: border-box
-		border-radius: 50%
-		position: absolute
-		cursor: pointer
-		left: 0px
-		bottom: 0px
-		display: -webkit-flex
-		display: -moz-flex
-		display: -ms-flex
-		display: -o-flex
-		display: flex
-		justify-content: center
-		z-index: 2
-	.range
-		display: block
-		position: absolute
-		background: rgba(111, 207, 151, .9)
-		height: 100%
-		border-radius: 10px
-		left: 0px
-		z-index: 1
-	.fromTo
-		position: absolute
-		display: -webkit-flex
-		display: -moz-flex
-		display: -ms-flex
-		display: -o-flex
-		display: flex
-		justify-content: space-between
-		align-items: center
-		width: 100%
-		font-size: 10px
-		top: -60%
-		&>*
-			margin: 5px
-			margin-bottom: 0px
-			margin-top: 0px
+		width: 0
+		position: relative
+		.handle
+			bottom: 0
+			transform: translate(-50%,50%)
+			.title__wrapper
+				.title
+					background: $brd
+					position: absolute
+					left: 150%
+					top: -50%
+					transform: translate(0,50%)
