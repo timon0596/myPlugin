@@ -1,26 +1,39 @@
 class slider{
 	vertical:boolean = true
-	handlesNumber:number = 1
-	handles:Array<any> = [new handle(this.vertical)]
-	range:Array<number|string> =  [0,100]
+	range:boolean = true
+	rangeElement:any = this.range?new RangeSection(this.vertical):null
+	minmax: [number,number]|null = this.range?[0,0]:null
+	handlesNumber:number = 2
+	handles:Array<any> = []
+	diapason:Array<string>|[number,number] =  ['0,100','0,100','0,100','0,100','0,100','0,100','0,100','0,100','0,100']
 	initialValues:Array<number|string> =  [0]
 	section:boolean= false
-	step:number = 30
+	step:number = 1
 	el:HTMLElement
 	stepSize:number = 0
-	private mouseX: number = 0
-	private mouseY: number = 0
 	private mousePos: number = 0
 
 	constructor(){
+		
 		this.el = document.createElement('div')
 		this.el.classList.add('slider')
-
 		this.vertical ? this.el.classList.add('vertical'):null
 		let innerDiv = document.createElement('div')
-		innerDiv.classList.add('slider__axis') 
-		$(innerDiv).append(this.handles[0].el)
+			innerDiv.classList.add('slider__axis')
+		this.range ? $(innerDiv).append(this.rangeElement.el):null
+		
+		let i = 0
+		while(i < this.handlesNumber ){
+			this.handles.push(new handle(this.vertical))
+			$(innerDiv).append(this.handles[i].el)
+			i++
+		}
 		$(this.el).append(innerDiv)
+		$(document).ready(()=>{
+			this.stepSize = typeof this.diapason[0]=='string'?
+				(this.el[this.vertical?'offsetHeight':'offsetWidth']/(this.diapason.length-1))*this.step:
+				(this.el[this.vertical?'offsetHeight':'offsetWidth']/Math.abs(<number>this.diapason[0]-<number>this.diapason[1])*this.step)
+		})
 	}
 
 
@@ -39,10 +52,25 @@ class slider{
 			}
 			return Math.round(this.mousePos/this.stepSize)*this.stepSize
 	}
+	minmaxCompute(){
+		this.minmax?
+			(this.minmax[0]=Math.min(...this.handles.map(el=>el.pos)),this.minmax[1]=Math.max(...this.handles.map(el=>el.pos))) : null
+	}
+
 
 };
-
+class RangeSection{
+	el:HTMLElement = document.createElement('div')
+	constructor(private vertical:boolean){
+		this.el.classList.add('rangeSection')
+	}
+	render(start:number,end:number){
+		this.el.style[this.vertical?'bottom':'left']=start+'px'
+		this.el.style[this.vertical?'height':'width']=end-start+'px'
+	}
+}
 class handle{
+	pos:number=0
 	hasTitle:boolean = true
 	private titleValue:string|number = 0
 	private el:HTMLElement
@@ -61,6 +89,7 @@ class handle{
 	}
 	setPosition(positionValue: number){
 		this.el.style[this.vertical?'bottom':'left'] =  positionValue + 'px'
+		this.pos=positionValue
 	}
 };
 let title: any = {
@@ -78,7 +107,7 @@ class controller{
 		$('.slider1.test').append(this.slider.el)
 
 
-		this.slider.stepSize = this.slider.el[this.slider.vertical?'offsetHeight':'offsetWidth']/(Math.abs(this.slider.range[0] - this.slider.range[1])/this.slider.step)
+		
 		
 		$(this.slider.handles).each(function(i,el){
 			$(el.el).on('mousedown',(e)=>{
@@ -89,10 +118,16 @@ class controller{
 
 		$(document).on('mouseup',()=>{
 			this.mousedown=false
+			console.dir(this.slider.minmax)
 		})
 
 		$(document).on('mousemove',(e)=>{
-			this.mousedown ? this.handle.setPosition(this.slider.countMousePos(e)) : null
+			this.mousedown ? 
+			(
+				this.handle.setPosition(this.slider.countMousePos(e)),
+				this.slider.minmaxCompute(),
+				this.slider.rangeElement?this.slider.rangeElement.render(...this.slider.minmax):null
+			) : null
 		})
 		
 	}
