@@ -162,7 +162,12 @@ class controller{
 			this.slider.rangeElement?this.slider.rangeElement.render(...this.slider.minmax):null
 		})
 
-		
+		$(this.slider.el).on('click',(e)=>{
+			this.handle.setPosition(this.slider.countMousePos(e))
+			this.slider.minmaxCompute(),
+			this.slider.rangeElement?this.slider.rangeElement.render(...this.slider.minmax):null,
+			this.handle.title = this.slider.computeTitleValue(e)
+		})
 		
 		$(this.slider.handles).each(function(i,el){
 			$(el.el).on('mousedown',(e)=>{
