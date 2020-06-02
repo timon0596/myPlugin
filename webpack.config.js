@@ -8,7 +8,7 @@ module.exports = {
 	
 	entry: './src/index.ts',
 	output: {
-		filename: 'main.js',
+		filename: 'main.[hash].js',
 		path: path.resolve(__dirname,'dist')
 	},devtool: 'source-map',
 	resolve: {
@@ -77,6 +77,9 @@ module.exports = {
 			jQuery: 'jquery',
 			'window.jQuery': 'jquery'
 		}),
-		new HtmlWebpackPugPlugin()
+		new HWP({
+			filename: "index.html",
+			template: './src/index.pug'
+		})
 	]
 }
