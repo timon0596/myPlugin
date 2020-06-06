@@ -5,10 +5,10 @@ class slider{
 	minmax: [number,number]|null = this.range?[0,0]:null
 	handlesNumber:number = 3
 	handles:Array<any> = []
-	diapason:Array<string>|[number,number] =  ["Москва","Московская обл.","Санкт-Петербург","Ленинградская обл.","Абаза","Респ. Хакасия"]
+	diapason:Array<string>|[number,number] =  [-100,100]
 	initialValues:Array<number|string> =  [1]
 	section:boolean= false
-	step:number = 4
+	step:number = 23
 	el:HTMLElement
 	stepSize:number = 0
 	private mousePos: number = 0
