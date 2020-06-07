@@ -83,6 +83,10 @@ export class Controller{
 				this.setHandle(this.currentHandle)
 			}
 		})
+		$(this.view.slider.element).click((e)=>{
+			this.model.computeHandlePosition(this.view.handles[this.currentHandle],e,this.view.slider.element[0])
+			this.setHandle(this.currentHandle)
+		})
 
 	}
 	setRange(){

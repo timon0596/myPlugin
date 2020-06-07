@@ -56,7 +56,7 @@ export class View{
 		if(typeof this.options.values[0]=='number'){
 			this.handles[i].title.text(Math.round(this.handles[i].offset/this.options.stepsize+this.options.values[0]))
 		}else{
-			this.handles[i].title.text(this.options.values[this.handles[i].offset/this.options.stepsize])
+			this.handles[i].title.text(this.options.values[Math.round(this.handles[i].offset/this.options.stepsize)])
 		}
 	}
 	setRange(minmax:[number,number]){

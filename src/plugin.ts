@@ -7,7 +7,7 @@ interface JQuery {
 		let initOptions:any = {
 			
 			vertical: false,
-			step:1,
+			step:4,
 			handles:3,
 			title:true,
 			range:true,

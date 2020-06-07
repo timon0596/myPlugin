@@ -8,6 +8,10 @@ export class Model{
 		let pos2 = this.options.vertical?
 			slider.offsetTop + slider.offsetHeight - e.clientY :
 			e.clientX - slider.offsetLeft
+			if(e.type=='click'){
+				handle.offset = Math.round(pos2/this.options.stepsize)*this.options.stepsize
+				return
+			}
 			if(pos2>this.options.slidersize){
 				handle.offset = this.options.slidersize
 				return
