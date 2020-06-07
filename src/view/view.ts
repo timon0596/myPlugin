@@ -5,11 +5,9 @@ class Slider{
 	element:any = $('<div>',{class: 'slider'})
 	axis:any = $('<div>',{class: 'slider__axis'})
 	scale:any = $('<div>',{class: 'slider__scale'})
-	scaleAxis: any = $('<div>',{class: 'scale__axis'})
 	constructor(){
-		this.wrapper.append(this.element)
-		this.scale.append(this.scaleAxis)
-		this.element.append(this.axis).append(this.scale)
+		this.wrapper.append(this.element).append(this.scale)
+		this.element.append(this.axis)
 	}
 	
 
@@ -40,7 +38,7 @@ export class View{
 			this.handles.push(new Handle())
 		}
 		this.slider = new Slider()
-		this.options.vertical?this.slider.element.addClass('vertical'):null
+		this.options.vertical?this.slider.wrapper.addClass('vertical'):null
 		this.range = this.options.range?new range():null
 		this.slider.axis.append(this.range)
 		$(this.handles).each((i,el)=>{
@@ -52,10 +50,8 @@ export class View{
 
 	setHandlePosition(id:number){
 		this.handles[id].element.css(this.options.vertical?'bottom':'left',this.handles[id].offset+'px')
-		
 	}
 
-	
 	setTitleValue(i:number){
 		if(typeof this.options.values[0]=='number'){
 			this.handles[i].title.text(Math.round(this.handles[i].offset/this.options.stepsize+this.options.values[0]))
@@ -67,6 +63,19 @@ export class View{
 		this.range[0].style[this.options.vertical?'bottom':'left']=minmax[0]+'px'
 		this.range[0].style[this.options.vertical?'height':'width']=minmax[1]-minmax[0]+'px'
 	}
-	
+	scaleInit(){
+			$(this.options.values).each((i,el)=>{
+				let scaleValue = $('<div>',
+					{
+						class: 'scale__value',
+						text: el,
+						css: {
+							[this.options.vertical?'bottom':'left']: i*this.options[typeof this.options.values[0]=='string'?'stepsize':'slidersize']
+						}
+						
+					})
+				this.slider.scale.append(scaleValue)		
+			})
+	}
 	
 }

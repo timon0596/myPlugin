@@ -1,4 +1,7 @@
 import {Controller} from './controller/controller2'
+interface JQuery {
+   timonSliderPlugin(options?: any): any
+}
 (function($){
 	$.fn.timonSliderPlugin = function(options:any){
 		let initOptions:any = {
@@ -20,9 +23,7 @@ import {Controller} from './controller/controller2'
 
 
 
-interface JQuery {
-   timonSliderPlugin(options?: any): any
-}
+
 
 
 

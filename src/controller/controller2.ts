@@ -71,6 +71,7 @@ export class Controller{
 					this.currentHandle = i
 				})
 			})
+			this.view.scaleInit()
 		})
 
 		$(document).mouseup(()=>{
