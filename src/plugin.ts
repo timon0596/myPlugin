@@ -15,8 +15,15 @@ interface JQuery {
 			initialValues:['2','4']
 		}
 		initOptions = {...initOptions,...options,el: this}
-		new Controller(initOptions)
-		return this;
+		let controller = new Controller(initOptions)
+		return new Proxy(this,{
+			get(target,prop:any){
+				if(prop == 'controller'){
+					return controller
+				}
+				return target[prop]
+			}
+		});
 
 	}
 }(jQuery))

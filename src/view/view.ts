@@ -50,14 +50,16 @@ export class View{
 
 	setHandlePosition(id:number){
 		this.handles[id].element.css(this.options.vertical?'bottom':'left',this.handles[id].offset+'px')
+		$(this.handles[id]).trigger('handlePositonChanged')
 	}
 
-	setTitleValue(i:number){
-		if(typeof this.options.values[0]=='number'){
-			this.handles[i].title.text(Math.round(this.handles[i].offset/this.options.stepsize+this.options.values[0]))
-		}else{
-			this.handles[i].title.text(this.options.values[Math.round(this.handles[i].offset/this.options.stepsize)])
-		}
+	setTitleValue(i:number): string|number{
+		let value = typeof this.options.values[0]=='number'?
+			Math.round(this.handles[i].offset/this.options.stepsize+this.options.values[0]):
+			this.options.values[Math.round(this.handles[i].offset/this.options.stepsize)]
+			
+			this.handles[i].title.text(value)
+			return value
 	}
 	setRange(minmax:[number,number]){
 		this.range[0].style[this.options.vertical?'bottom':'left']=minmax[0]+'px'

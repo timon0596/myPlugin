@@ -11,6 +11,16 @@ $brd: #e3eaa7
 	display: -o-flex
 	display: flex
 	justify-content: center
+	flex-wrap: wrap
+	.inputPanel
+		display: -webkit-flex
+		display: -moz-flex
+		display: -ms-flex
+		display: -o-flex
+		display: flex
+		flex-direction: column
+		margin-left: 2rem
+
 .slider
 	position: relative
 	user-select: none
@@ -54,8 +64,10 @@ $brd: #e3eaa7
 					transform-origin: 50% 50%
 					transform: translate(-50%,0)
 .slider__wrapper
+	order: -1
 	display: grid
 	grid-gap: 10px
+	align-self: start
 	.slider__scale
 		position: relative
 		width: 100%

@@ -38,4 +38,20 @@ export class Model{
 				handle.offset
 		}
 	}
+	computePosFromInput(value:string|number,handle:any){
+		if(typeof value!=this.options.type){
+			console.log('wrong argument')
+			return
+		}
+		if(typeof value=='string'){
+			let i = this.options.values.indexOf(value)
+			if(i!=-1){
+				handle.offset = i*this.options.stepsize
+			}else{
+				console.log('slider has no such value')
+				return
+			}
+		}
+
+	}
 }

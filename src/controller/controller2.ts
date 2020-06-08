@@ -60,7 +60,8 @@ export class Controller{
 
 			$.extend(this.options,{
 				slidersize: this.slidersize,
-				stepsize: this.stepsize
+				stepsize: this.stepsize,
+				type: this.type
 			})
 
 			$(this.view.handles).each((i,el)=>{
@@ -83,7 +84,7 @@ export class Controller{
 				this.setHandle(this.currentHandle)
 			}
 		})
-		$(this.view.slider.element).click((e)=>{
+		$(this.view.slider.element).mousedown((e)=>{
 			this.model.computeHandlePosition(this.view.handles[this.currentHandle],e,this.view.slider.element[0])
 			this.setHandle(this.currentHandle)
 		})
