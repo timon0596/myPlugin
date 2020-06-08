@@ -7,19 +7,31 @@ let options:any = {
 	step:1
 	
 }
-let cnt1 = $('.slider1').timonSliderPlugin(options)
-let cnt2 = $('.slider2').timonSliderPlugin({vertical: true})
-let cnt3 = $('.slider3').timonSliderPlugin({...options,handles: 2})
-let cnts = [cnt1,cnt2,cnt3]
-let {view: {handles: handles1}, view: view1,model: model1}= cnt1.controller
-let {view: {handles: handles2}, view: view2,model: model2}= cnt2.controller
-let {view: {handles: handles3}, view: view3,model: model3}= cnt3.controller
-let handles = [handles1,handles2,handles3]
-let views = [view1,view2,view3]
-let models = [model1,model2,model3]
 
+
+
+let cnts = [
+		$('.slider1').timonSliderPlugin(options),
+		$('.slider2').timonSliderPlugin({vertical: true}),
+		$('.slider3').timonSliderPlugin({...options,handles: 2})
+	]
+let handlesArr:any[] = [];
+let views:any[] = [];
+let models:any[]= [];
+(()=>{
+	$(cnts).each((i,el)=>{
+		let {view: {handles},view,model}=el.controller
+		handlesArr.push(handles)
+		views.push(view)
+		models.push(model)
+	})
+})()
+
+function Handles(){
+	
+}
 $(document).ready(()=>{
-	$(handles).each((index,element)=>{
+	$(handlesArr).each((index,element)=>{
 		$(element).each((i:number,el:any)=>{
 			cnts[index].find('.inputPanel').append($('<input>',{
 				attr: {'handle': i,'controller': index},
