@@ -1,50 +1,62 @@
 import "./index.pug"
 import './plugin.ts'
 import './style.sass'
-let options:any = {
+import './types'
+const options:options = {
 	
-	vertical: false,
-	step:1
+	step:2,
+	title: false,
+	handles:2
 	
 }
+const opts:options[] = [
+					options,
+					{vertical: true},
+					{	step: 10,
+						vertical: true,
+						values: [40,340],
+					},
+					{...options,handles: 2},
+					{
+						values: ['qwe','qwe1','qwer','qweqwe','werwertw','asdasd','asd'],
+						vertical:true,
+						initialValues: ["2","2","4"]
+					}
+				]
 
-
-
-let cnts = [
-		$('.slider1').timonSliderPlugin(options),
-		$('.slider2').timonSliderPlugin({vertical: true}),
-		$('.slider3').timonSliderPlugin({...options,handles: 2})
-	]
-let handlesArr:any[] = [];
-let views:any[] = [];
-let models:any[]= [];
+const cnts: any[] = []
+$('.js-test').each((i,el)=>{
+	cnts.push($(el).timonSliderPlugin(opts[i]))
+})
+const handlesArr:any[] = [];
+const views:any[] = [];
+const models:any[]= [];
 (()=>{
 	$(cnts).each((i,el)=>{
-		let {view: {handles},view,model}=el.controller
+		const {view: {handles},view,model}=el.controller
 		handlesArr.push(handles)
 		views.push(view)
 		models.push(model)
 	})
 })()
 
-function Handles(){
-	
-}
+
 $(document).ready(()=>{
 	$(handlesArr).each((index,element)=>{
+		cnts[index].find('.config').text(JSON.stringify(cnts[index].options,null,2))
 		$(element).each((i:number,el:any)=>{
 			cnts[index].find('.inputPanel').append($('<input>',{
 				attr: {'handle': i,'controller': index},
 				placeholder: 'handle#' + (i+1) + ' value',
 				on: {
-					change: (e:any)=>{
+					change: (e:JQuery.ChangeEvent)=>{
+						console.log(e.target.value)
 						if(!cnts[index].controller.mousedown){
 							models[index].computePosFromInput(e.target.value,el)
 							cnts[index].controller.setHandle(i)
 						}
 					}
 				}
-
 			}))
 		})
 		$(element).on('handlePositonChanged',function(e){

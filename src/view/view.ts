@@ -1,10 +1,10 @@
 
 
 class Slider{
-	wrapper:any = $('<div>',{class: 'slider__wrapper'})
-	element:any = $('<div>',{class: 'slider'})
-	axis:any = $('<div>',{class: 'slider__axis'})
-	scale:any = $('<div>',{class: 'slider__scale'})
+	wrapper:JQuery = $('<div>',{class: 'slider__wrapper'})
+	element:JQuery = $('<div>',{class: 'slider'})
+	axis:JQuery = $('<div>',{class: 'slider__axis'})
+	scale:JQuery = $('<div>',{class: 'slider__scale'})
 	constructor(){
 		this.wrapper.append(this.element).append(this.scale)
 		this.element.append(this.axis)
@@ -13,61 +13,65 @@ class Slider{
 
 }
 class Handle{
-	element:any = $('<div>',{class: 'handle'})
-	titleWrapper:any = $('<div>',{class: 'title__wrapper'})
-	title:any = $('<div>',{class: 'title'})
-	offset:number = 0
+	element:JQuery = $('<div>',{class: 'handle'})
+	titleWrapper:JQuery = $('<div>',{class: 'title__wrapper'})
+	title:JQuery = $('<div>',{class: 'title'})
+	offset = 0
 	constructor(){
-		this.element.append(this.titleWrapper.append(this.title))
+		this.element.append(this.titleWrapper)
+		this.appendTitle()
+	}
+	appendTitle():void{
+		this.titleWrapper.append(this.title)
 	}
 	
 }
 
 class range{
-	range:any = $('<div>',{class: 'range'})
-	constructor(){
-		return this.range
+	constructor(public range:JQuery = $('<div>',{class: 'range'})){
 	}
 }
 export class View{
-	slider: any
-	handles: Array<any> = []
-	range: any
-	constructor(public options:any){
+	slider: Slider
+	handles: Array<Handle> = []
+	range: JQuery
+	constructor(public options:initOptions){
 		for(let i=0;i<this.options.handles;i++){
 			this.handles.push(new Handle())
 		}
 		this.slider = new Slider()
 		this.options.vertical?this.slider.wrapper.addClass('vertical'):null
-		this.range = this.options.range?new range():null
-		this.slider.axis.append(this.range)
-		$(this.handles).each((i,el)=>{
+		this.range = this.options.range?new range().range:$()
+		this.range?this.slider.axis.append(this.range):null
+		$(this.handles).each((i,el:any)=>{
 			this.slider.axis.append(el.element)
-			this.options.title?null:el.title.css('display','none')
+			this.showTitle()		
 		})
 		$(options.el).append(this.slider.wrapper)
 	}
-
-	setHandlePosition(id:number){
+	showTitle():void{
+		this.options.title?null:this.handles.forEach((el)=>{el.title.css('display','none')})
+	}
+	setHandlePosition(id:number):void{
 		this.handles[id].element.css(this.options.vertical?'bottom':'left',this.handles[id].offset+'px')
 		$(this.handles[id]).trigger('handlePositonChanged')
 	}
 
 	setTitleValue(i:number): string|number{
-		let value = typeof this.options.values[0]=='number'?
+		const value = typeof this.options.values[0]=='number'?
 			Math.round(this.handles[i].offset/this.options.stepsize+this.options.values[0]):
 			this.options.values[Math.round(this.handles[i].offset/this.options.stepsize)]
 			
 			this.handles[i].title.text(value)
 			return value
 	}
-	setRange(minmax:[number,number]){
+	setRange(minmax:[number,number]):void{
 		this.range[0].style[this.options.vertical?'bottom':'left']=minmax[0]+'px'
 		this.range[0].style[this.options.vertical?'height':'width']=minmax[1]-minmax[0]+'px'
 	}
-	scaleInit(){
+	scaleInit():void{
 			$(this.options.values).each((i,el)=>{
-				let scaleValue = $('<div>',
+				const scaleValue = $('<div>',
 					{
 						class: 'scale__value',
 						text: el,

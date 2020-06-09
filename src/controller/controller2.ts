@@ -1,16 +1,16 @@
-let {View} = require('../view/view')
-let {Model} = require('../model/model')
+import {View} from '../view/view'
+import {Model} from '../model/model'
 
 export class Controller{
 	options:any
 	type:string 
-	slidersize:number = 0
-	stepsize:number = 0
+	slidersize = 0
+	stepsize = 0
 	model:any 
 	view:any
 	minmax:[number,number] = [0,0]
-	mousedown:boolean = false
-	currentHandle:number = 0
+	mousedown = false
+	currentHandle = 0
 	constructor(options:any){
 		this.options = {...options}
 
@@ -27,7 +27,7 @@ export class Controller{
 				this.options.step<1?
 					1:this.options.step
 		}else{
-			let diapason = Math.abs(this.options.values[0]-this.options.values[1])
+			const diapason = Math.abs(this.options.values[0]-this.options.values[1])
 			this.options.step = this.options.step>diapason?
 				diapason:
 				this.options.step<1?
