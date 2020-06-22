@@ -2,17 +2,30 @@ const path = require('path');
 const HWP=require('html-webpack-plugin');
 const webpack = require('webpack');
 const HtmlWebpackPugPlugin = require('html-webpack-pug-plugin');
+const MiniCssExtractPlugin=require('mini-css-extract-plugin')
+const autoprefixer = require('autoprefixer')
 
 // const autoprefixer = require('autoprefixer');
 module.exports = {
 	
 	entry: './src/index.ts',
 	output: {
-		filename: 'main.[hash].js',
+		filename: 'main.js',
 		path: path.resolve(__dirname,'dist')
 	},devtool: 'source-map',
 	resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx']
+  },
+  optimization: {
+  	splitChunks: {
+  		cacheGroups: {
+  			commons: {
+  				test: /[\\/]node_modules[\\/]/,
+  				name: 'vendors',
+  				chunks: 'all'
+  			}
+  		}
+  	}
   },
 	module:{
 		rules: [{
@@ -31,25 +44,28 @@ module.exports = {
 	    },
 		{
 		    test: /\.(scss|sass)$/,
-		    use: [
-				    {
-				      loader: 'style-loader', 
-				    }, {
-				      loader: 'css-loader', 
-				      loader: 'postcss-loader', 
-				      options: {
-				        plugins: function () {
-				          return [
-				            require('precss'),
-				            require('autoprefixer')
-				          ];
-				        }
-				      }
-				    },
-				    {
-				      loader: 'sass-loader' // compiles SASS to CSS
-				    }
-		    	 ]
+		        use: [
+		        	MiniCssExtractPlugin.loader, 
+		        	{
+		    			loader: 'css-loader',
+		    			options: {
+		    				sourceMap: true
+		    			}
+		    		},
+		    		{
+		    			loader: 'postcss-loader',
+		    			options: {
+		    				plugins: [
+		    				autoprefixer()
+		    				],
+		    				sourceMap: true
+		    			}
+		    		},
+		    		{
+		    			loader: 'sass-loader',
+		    			options: { sourceMap: true }
+		    		}
+		    	]
 		  	},
   		{	
 			test:/\.css$/,
@@ -71,15 +87,13 @@ module.exports = {
 		new HWP({
 			template: './src/index.pug',
 			filename: 'index.html'
-		}),
+		}),new MiniCssExtractPlugin({
+				filename: '[name].[hash].css',
+			}),
 		new webpack.ProvidePlugin({
 			$: 'jquery',
 			jQuery: 'jquery',
 			'window.jQuery': 'jquery'
-		}),
-		new HWP({
-			filename: "index.html",
-			template: './src/index.pug'
 		})
 	]
 }

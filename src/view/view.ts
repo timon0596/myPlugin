@@ -1,87 +1,77 @@
 
-
-class Slider{
-	wrapper:JQuery = $('<div>',{class: 'slider__wrapper'})
-	element:JQuery = $('<div>',{class: 'slider'})
-	axis:JQuery = $('<div>',{class: 'slider__axis'})
-	scale:JQuery = $('<div>',{class: 'slider__scale'})
-	constructor(){
-		this.wrapper.append(this.element).append(this.scale)
-		this.element.append(this.axis)
-	}
-	
-
-}
+import $ from 'jquery'
 class Handle{
-	element:JQuery = $('<div>',{class: 'handle'})
-	titleWrapper:JQuery = $('<div>',{class: 'title__wrapper'})
-	title:JQuery = $('<div>',{class: 'title'})
-	offset = 0
+	handle = $('<div>',{class: 'handle'})
+	title = $('<div>',{class: 'title'})
 	constructor(){
-		this.element.append(this.titleWrapper)
-		this.appendTitle()
+		this.init()
 	}
-	appendTitle():void{
-		this.titleWrapper.append(this.title)
+	init(){
+		this.handle.append(this.title)
 	}
-	
 }
-
-class range{
-	constructor(public range:JQuery = $('<div>',{class: 'range'})){
+class Slider{
+	slider = $('<div>',{class: 'slider'})
+	axis = $('<div>',{class: 'axis'})
+	scale = $('<div>',{class: 'scale'})
+	range = $('<div>',{class: 'range'})
+	
+	constructor(){
+		this.init()
+	}
+	init(){
+		this.axis.append(this.range)
+		this.slider.append(this.axis).append(this.scale)		
 	}
 }
 export class View{
-	slider: Slider
-	handles: Array<Handle> = []
-	range: JQuery
-	constructor(public options:initOptions){
+	handles:any[]=[]
+	slider = new Slider()
+	constructor(public options:any){
 		for(let i=0;i<this.options.handles;i++){
 			this.handles.push(new Handle())
 		}
-		this.slider = new Slider()
-		this.options.vertical?this.slider.wrapper.addClass('vertical'):null
-		this.range = this.options.range?new range().range:$()
-		this.range?this.slider.axis.append(this.range):null
-		$(this.handles).each((i,el:any)=>{
-			this.slider.axis.append(el.element)
-			this.showTitle()		
+		this.init()
+	}
+	init(){
+		this.handles.forEach((el)=>{
+			this.slider.axis.append(el.handle)
 		})
-		$(options.el).append(this.slider.wrapper)
 	}
-	showTitle():void{
-		this.options.title?null:this.handles.forEach((el)=>{el.title.css('display','none')})
+	vertical(){
+		this.slider.slider.addClass('vertical')
 	}
-	setHandlePosition(id:number):void{
-		this.handles[id].element.css(this.options.vertical?'bottom':'left',this.handles[id].offset+'px')
-		$(this.handles[id]).trigger('handlePositonChanged')
+	horizontal(){
+		this.slider.slider.removeClass('vertical')
 	}
-
-	setTitleValue(i:number): string|number{
-		const value = typeof this.options.values[0]=='number'?
-			Math.round(this.handles[i].offset/this.options.stepsize+this.options.values[0]):
-			this.options.values[Math.round(this.handles[i].offset/this.options.stepsize)]
-			
-			this.handles[i].title.text(value)
-			return value
+	titleOff(){
+		this.handles.forEach((el)=>{
+			el.title.hide()
+		})
 	}
-	setRange(minmax:[number,number]):void{
-		this.range[0].style[this.options.vertical?'bottom':'left']=minmax[0]+'px'
-		this.range[0].style[this.options.vertical?'height':'width']=minmax[1]-minmax[0]+'px'
+	titleOn(){
+		this.handles.forEach((el)=>{
+			el.title.show()
+		})
 	}
-	scaleInit():void{
-			$(this.options.values).each((i,el)=>{
-				const scaleValue = $('<div>',
-					{
-						class: 'scale__value',
-						text: el,
-						css: {
-							[this.options.vertical?'bottom':'left']: i*this.options[typeof this.options.values[0]=='string'?'stepsize':'slidersize']
-						}
-						
-					})
-				this.slider.scale.append(scaleValue)		
-			})
+	rangeOn(){
+		this.slider.range.show()
+	}
+	rangeOff(){
+		this.slider.range.hide()
+	}
+	setRange({start,lngt}:any){
+		this.slider.range.css(this.options.vertical?'bottom':'left',start+'px')	
+		this.slider.range.css(this.options.vertical?'left':'bottom',0+'px')	
+		this.slider.range.css(this.options.vertical?'height':'width',lngt+'px')
+		this.slider.range.css(this.options.vertical?'width':'height',20+'px')
+	}
+	setHandle(pos:number,i:number){
+		this.handles[i].handle.css(this.options.vertical?'bottom':'left',pos+'px')
+		this.handles[i].handle.css(this.options.vertical?'left':'bottom',0)
+	}
+	setTitle(value:string|number,i:number){
+		this.handles[i].title.text(value)
 	}
 	
 }

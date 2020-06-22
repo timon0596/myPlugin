@@ -9,6 +9,8 @@ type initOptions = {
 	type:string
 	slidersize:number
 	stepsize:number
+	singleStep:number
+	diapason:number
 	el: JQuery
 }
 type options = {
@@ -22,6 +24,8 @@ type options = {
 	type?:string
 	slidersize?:number
 	stepsize?:number
+	singleStep?: number
+	diapason?:number
 	el?: JQuery
 }
 type Slider = {
@@ -35,7 +39,4 @@ type Handle = {
 	titleWrapper:JQuery
 	title:JQuery
 	offset:number
-}
-type range = {
-	range: JQuery
 }

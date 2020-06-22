@@ -1,107 +1,100 @@
-import {View} from '../view/view'
-import {Model} from '../model/model'
-
+import {Model} from './../model/model'
+import {View} from './../view/view'
+import $ from 'jquery'
 export class Controller{
-	options:any
-	type:string 
-	slidersize = 0
-	stepsize = 0
-	model:any 
+	model:any
 	view:any
-	minmax:[number,number] = [0,0]
-	mousedown = false
-	currentHandle = 0
-	constructor(options:any){
-		this.options = {...options}
-
-//-------------------------options validation-------------------------		
-//-------------------------options validation-------------------------		
-//-------------------------options validation-------------------------
-		this.options.range = this.options.handles<2?false:this.options.range
-
-		this.type = typeof this.options.values[0]
-
-		if(this.type=='string'){
-			this.options.step = this.options.step>(this.options.values.length-1)?
-				(this.options.values.length-1):
-				this.options.step<1?
-					1:this.options.step
-		}else{
-			const diapason = Math.abs(this.options.values[0]-this.options.values[1])
-			this.options.step = this.options.step>diapason?
-				diapason:
-				this.options.step<1?
-					1:this.options.step
-		}
-
-		if(this.type!=typeof this.options.initialValues[0]){
-			this.options.initialValues=[...this.options.values]
-		}
-
-		this.options.initialValues = this.type=='number'?
-			this.options.initialValues.map((item:number)=>{
-				return item<this.options.values[0]?this.options.values[0]:item>this.options.values[1]?this.options.values[1]:item
-			}):
-			this.options.initialValues.map((item:string,index:number)=>{
-				return this.options.values.indexOf(item)!=-1?item:this.options.values[index]
+	currentHandle=0
+	mousedown= false
+	constructor(public options:any){
+		this.init() 
+		this.view.handles.forEach((el:any,i:number)=>{
+			if(this.options.initialValues[i]){
+				this.model.computePosByValue(this.options.initialValues[i],i)
+			}
+			this.view.setHandle(this.model.handlePos[i],i)
+			this.options.range?this.view.setRange(this.model.range()):0
+			this.view.setTitle(this.model.computeTitle(i),i)
+			el.handle.mousedown(()=>{
+				this.currentHandle = i
+				this.mousedown = true
 			})
-
-
-//-------------------------options validation-------------------------
-//-------------------------options validation-------------------------
-//-------------------------options validation-------------------------
-		this.model = new Model(this.options)
-		this.view = new View(this.options)
-		$(document).ready(()=>{
-			this.slidersize = this.view.slider.element[0][this.options.vertical?'clientHeight':'clientWidth']
-			this.stepsize = typeof this.options.values[0]=='number'?
-								this.slidersize/Math.abs(this.options.values[0]-this.options.values[1]):
-								this.slidersize/(this.options.values.length-1)
-
-			$.extend(this.options,{
-				slidersize: this.slidersize,
-				stepsize: this.stepsize,
-				type: this.type
-			})
-
-			$(this.view.handles).each((i,el)=>{
-				this.model.computeInitPosition(el,i)
-				this.setHandle(i)
-				el.element.mousedown(()=>{
-					this.mousedown = true
-					this.currentHandle = i
-				})
-			})
-			this.view.scaleInit()
 		})
-
 		$(document).mouseup(()=>{
 			this.mousedown = false
 		})
 		$(document).mousemove((e)=>{
-			if(this.mousedown){
-				this.model.computeHandlePosition(this.view.handles[this.currentHandle],e,this.view.slider.element[0])
-				this.setHandle(this.currentHandle)
-			}
+			this.setHandle(e)
 		})
-		$(this.view.slider.element).mousedown((e)=>{
-			this.model.computeHandlePosition(this.view.handles[this.currentHandle],e,this.view.slider.element[0])
-			this.setHandle(this.currentHandle)
-		})
+	}
 
+	init(){
+		this.model = new Model(this.options)
+		this.view = new View(this.options)
+		this.options.vertical?this.view.vertical():0
+		!this.options.range?this.view.rangeOff:0
+		this.optionsValidation()
 	}
-	setRange(){
-		this.minmax[0] = Math.min(...this.view.handles.map((el:any)=>el.offset))
-		this.minmax[1] = Math.max(...this.view.handles.map((el:any)=>el.offset))
-		this.view.setRange(this.minmax)
+	getSlidersize(){
+		return this.view.slider.slider[0][this.options.vertical?'offsetHeight':'offsetWidth']
 	}
-	setHandle(i:number){
-		this.view.setHandlePosition(i)
-		this.view.setTitleValue(i)
-		this.options.range?this.setRange():null
+	setHandle(e:MouseEvent|JQuery.MouseMoveEvent){
+		if(this.mousedown){
+			this.model.computePos(e,this.currentHandle,this.view.slider.slider[0])
+			this.view.setHandle(this.model.handlePos[this.currentHandle],this.currentHandle)
+			this.view.setTitle(this.model.computeTitle(this.currentHandle),this.currentHandle)
+			this.options.range?this.view.setRange(this.model.range()):0
+			const event:any = $.Event( 'changed-handle-pos' )
+			event.handleIndex = this.currentHandle
+			$(this.view.slider.slider).trigger(event)
+		}
 	}
+	setHandleByValue(value:string,i:number){
+		this.model.computePosByValue(value,i)
+		this.view.setHandle(this.model.handlePos[i],i)
+		this.view.setTitle(this.model.computeTitle(i),i)
+		this.options.range?this.view.setRange(this.model.range()):0
+	}
+	optionsValidation(){
+		this.options.type = typeof this.options.values[0]
+		if(typeof this.options.initialValues[0]!=this.options.type){
+			this.options.initialValues=[...this.options.values]
+		}
+		this.options.diapason = this.options.type=='number'?Math.abs(this.options.values[0]-this.options.values[1]):0
+		this.options.el.append(this.view.slider.slider)
+		this.options.slidersize = this.getSlidersize()
+		this.options.singleStep = this.options.type=='string'?
+			this.options.slidersize/(this.options.values.length-1):this.options.slidersize/this.options.diapason
+		this.options.stepsize = this.options.singleStep*this.options.step 
+	}
+	vert(){
+		this.options.vertical=true
+		this.view.vertical()
+		this.reinit()
+	}
+	hor(){
+		this.options.vertical=false
+		this.view.horizontal()
+		this.reinit()
+	}
+	rng(){
+		this.options.range=!this.options.range
+		this.options.range?this.view.rangeOn():this.view.rangeOff()
+	}
+	title(){
+		this.options.title=!this.options.title
+		this.options.title?this.view.titleOn():this.view.titleOff()
+	}
+	reinit(){
+		this.options.slidersize = this.getSlidersize()
+		this.options.singleStep = this.options.type=='string'?
+			this.options.slidersize/(this.options.values.length-1):this.options.slidersize/this.options.diapason
+		this.options.stepsize = this.options.singleStep*this.options.step
+		this.view.handles.forEach((el:any,i:number)=>{
+			this.view.setHandle(this.model.handleSteps[i]*this.options.singleStep,i)
+			this.view.setTitle(this.model.computeTitle(i),i)
+		})
+		this.options.range?this.view.setRange(this.model.range()):0
+	}
+
 }
-
-
-
-

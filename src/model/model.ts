@@ -1,62 +1,52 @@
+import $ from 'jquery'
+
 export class Model{
-	constructor(public options:initOptions){
+	handlePos:number[]=[]
+	handleSteps:number[]=[]
+	constructor(public options:any){
+		for(let i=0;i<this.options.handles;i++){
+			this.handlePos.push(0)
+			this.handleSteps.push(0)
+		}
 	}
-	computeHandlePosition(handle:any,e:MouseEvent,slider:any):void{
+	computePos({pageX: x,pageY: y}:MouseEvent,i:number,{offsetTop:top,offsetLeft:left,offsetHeight:height,offsetWidth:width}:any){
 		const pos = this.options.vertical?
-			slider.offsetTop + slider.offsetHeight - e.pageY - handle.offset :
-			e.clientX - slider.offsetLeft - handle.offset
-		const pos2 = this.options.vertical?
-			slider.offsetTop + slider.offsetHeight - e.pageY :
-			e.clientX - slider.offsetLeft
-			if(e.type=='click'){
-				handle.offset = Math.round(pos2/this.options.stepsize)*this.options.stepsize
-				return
-			}
-			if(pos2>this.options.slidersize){
-				handle.offset = this.options.slidersize
-				return
-			}
-			else if(pos2<0){
-				handle.offset = 0
-				return
-			}
-		if(Math.abs(pos)>this.options.stepsize*this.options.step){
-				handle.offset+=Math.round(pos/(this.options.stepsize*this.options.step))*this.options.stepsize*this.options.step
-				handle.offset = handle.offset>this.options.slidersize?this.options.slidersize:handle.offset<0?0:handle.offset
-			}
+			top + height - y - this.handlePos[i]:
+			x-left-this.handlePos[i]
+		const pos1 = this.options.vertical?
+			top + height - y:
+			x-left
+			
+			this.handlePos[i]+=Math.abs(pos)/this.options.stepsize>1?Math.round(pos/this.options.stepsize)*this.options.stepsize:0
+			this.handlePos[i] = pos1>this.options.slidersize?
+				this.options.slidersize:
+				pos1<0? 0:this.handlePos[i]
+			this.handleSteps[i] = Math.round(this.handlePos[i]/this.options.singleStep)
 	}
-	computeInitPosition(handle:any,i:number):void{
-		if(typeof this.options.initialValues[0]=='number'){
-			handle.offset = this.options.initialValues[i]?
-				Math.round((<number>this.options.initialValues[i] - <number>this.options.values[0])/Math.abs(<number>this.options.values[0]-<number>this.options.values[1])*
-					this.options.slidersize/this.options.stepsize)*
-					this.options.stepsize :
-				handle.offset
-		}else{
-			handle.offset = this.options.initialValues[i]?
-				this.options.values.indexOf(<never>this.options.initialValues[i])*this.options.stepsize:
-				handle.offset
-		}
+	computeTitle(i:number){
+			const index = this.handleSteps[i]
+			return this.options.type=='string'?this.options.values[index]:this.handleSteps[i]+this.options.values[0]
 	}
-	computePosFromInput(value:any,handle:any):void{
-		
+	computePosByValue(value:string|number,index:number){
+
 		if(this.options.type=='string'){
-			const i = this.options.values.indexOf(<never>value)
-			if(i!=-1){
-				handle.offset = i*this.options.stepsize
-			}else{
-				console.log('slider has no such value')
-				return
-			}
-		}else if(!isNaN(Number(value))){
 
-			value=Number(value)>this.options.values[1]?
-				this.options.values[1]:value<this.options.values[0]?
-					this.options.values[0]:value
-			handle.offset = Math.round((value - <number>this.options.values[0])/Math.abs(<number>this.options.values[0]-<number>this.options.values[1])*
-					this.options.slidersize/this.options.stepsize)*
-					this.options.stepsize
+			const i=this.options.values.indexOf(value)
+			this.handleSteps[index]=i!=-1?i:0
+			this.handlePos[index]=this.handleSteps[index]*this.options.singleStep
+		}
+		else{
+			this.handleSteps[index]=Number(value)>this.options.values[1]?
+				this.options.values[1]:
+				Number(value)<this.options.values[0]?
+					this.options.values[0]:Number(value)
+			this.handleSteps[index]=this.handleSteps[index]-this.options.values[0]
+			this.handlePos[index]=this.handleSteps[index]*this.options.singleStep
 		}
 
 	}
+	range(){
+		return {start : Math.min(...this.handlePos),lngt: Math.max(...this.handlePos) - Math.min(...this.handlePos)}
+	}
+	
 }
