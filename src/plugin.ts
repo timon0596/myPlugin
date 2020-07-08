@@ -7,8 +7,8 @@ interface JQuery {
 		let initOptions:initOptions = {
 			
 			vertical: false,
-			step:13,
-			handles:3,
+			step:1,
+			handles:2,
 			title:true,
 			range:true,
 			// values: ['1','2','3','4','5','1','2','3','4','5'],
@@ -24,15 +24,11 @@ interface JQuery {
 		initOptions = {...initOptions,...options,el: this}
 
 		const controller = new Controller(initOptions)
-		const opt:options = {...initOptions}
 		return new Proxy(this,{
-			get(target,prop:any){
+			get(target:any,prop){
 				switch(prop){
 					case 'controller':
 						return controller
-					case 'options':
-						delete opt['el']
-						return opt
 					default:
 						return target[prop]		
 				}

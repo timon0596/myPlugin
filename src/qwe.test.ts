@@ -27,7 +27,9 @@ describe('intializing slider',()=>{
 		expect(c.view.slider).toBeDefined()
 	})
 	test('correct number of model handles array items',()=>{
-		expect(c.model.handles.length).toBe(initOptions.handles)
+		expect(c.model.handlePos.length).toBe(initOptions.handles)
+		expect(c.model.handleSteps.length).toBe(initOptions.handles)
+		expect(c.view.handles.length).toBe(initOptions.handles)
 	})
 	test('coorect number of handles appended to slider',()=>{
 		expect(c.view.slider.axis.children('.handle').length).toBe(initOptions.handles)
@@ -40,9 +42,9 @@ describe('intializing slider',()=>{
 	})
 	test('handles initial pos',()=>{
 		$(c.options.initialValues).each((i,el)=>{
-			if(c.model.handles[i]){
+			if(c.model.handlePos[i]){
 				const pos = c.model.computePosByValue(el)
-				expect(c.model.handles[i].pos).toBe(pos)
+				expect(c.model.handlePos[i]).toBe(pos)
 			}
 		})
 	})
@@ -50,6 +52,4 @@ describe('intializing slider',()=>{
 		expect(c.options.type).toEqual(typeof c.options.values[0])
 		expect(c.options.type).toEqual(typeof c.options.initialValues[0])
 	})
-	
-
 });

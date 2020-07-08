@@ -1,6 +1,7 @@
 const c:any = []
+const opts:options[] = [{vertical:true}]
 $('.js-test').each((i,el)=>{
-	c[i] = $(el).timonSliderPlugin().controller
+	c[i] = $(el).timonSliderPlugin(opts[i]).controller
 	$(el).find('.inputPanel').append(
 		$('<button>',{
 			class: 'vert',
@@ -43,13 +44,13 @@ $('.js-test').each((i,el)=>{
 			on:{
 				blur:function(){
 					c[i].setHandleByValue(this.value,ind)
-					console.log(this.value)
 				}
 			}
 		}))
 	})
-	c[i].view.slider.slider.on('changed-handle-pos',(e:any)=>{
+	const handler = (e:any)=>{
 		$(el).find('input')[e.handleIndex].value = c[i].model.computeTitle(e.handleIndex)
-	})
+	}
+	c[i].view.slider.slider.on('changed-handle-pos',handler)
 
 })

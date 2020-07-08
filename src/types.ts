@@ -29,14 +29,58 @@ type options = {
 	el?: JQuery
 }
 type Slider = {
-	wrapper:JQuery
-	element:JQuery
-	axis:JQuery
-	scale:JQuery
+	slider:JQuery<HTMLElement>
+	axis:JQuery<HTMLElement>
+	scale:JQuery<HTMLElement>
+	range:JQuery<HTMLElement>
 }
 type Handle = {
-	element:JQuery
-	titleWrapper:JQuery
-	title:JQuery
-	offset:number
+	handle:JQuery<HTMLElement>
+	title:JQuery<HTMLElement>
+}
+type range = {
+	start:number
+	lngt:number
+}
+type view = {
+	handles:Handle[]
+	slider:Slider
+	init: ()=>void
+
+	vertical: ()=>void
+
+	horizontal: ()=>void
+		
+	titleOff: ()=>void
+		
+	titleOn: ()=>void
+		
+	rangeOn: ()=>void
+		
+	rangeOff: ()=>void
+		
+	setRange: (range:range)=>void
+
+	setHandle: (pos:number,i:number)=>void
+
+	setTitle: (value:string|number,i:number)=>void
+	scaleValues: ()=>void
+	scaleValuesInit: ()=>void
+}
+type boundingRect = {
+	offsetTop:number
+	offsetLeft:number	
+	offsetHeight:number
+}
+type model = {
+	handlePos:number[]
+	handleSteps:number[]
+
+	computePos: (e:MouseEvent|JQuery.MouseMoveEvent,i:number,br:boundingRect)=>void
+
+	computeTitle: (i:number) => string|number
+
+	computePosByValue: (value:string|number,index:number)=>void
+	
+	range:()=>range
 }
