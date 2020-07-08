@@ -1,55 +1,66 @@
 import {Controller} from './controller/controller2'
 import $ from 'jquery'
-import puppeteer from 'puppeteer'
-const initOptions:any = {
+const initOptions:initOptions = {
 			vertical: false,
 			step:1,
-			handles:3,
+			handles:2,
 			title:true,
 			range:true,
 			values: ['1','2','3','4','5','1','2','3','4','5'],
-			// values: [50,100],
-			initialValues:['2','4'],
+			// values: [123,567],
+			initialValues:[234,262,125],
 			type: 'string',
 			slidersize: 0,
 			stepsize: 0,
-			el: $('.js-test')
+			singleStep: 0,
+			diapason: 0,
+			el: $()
 		}
 
-describe('intializing slider',()=>{
+describe('common test',()=>{
 	let c:any
 	beforeEach(()=>{
-		c = new Controller({...initOptions,initialValues: [1,2]})
+		c = new Controller({...initOptions,initialValues: [1,2],values: ['qqqqqqqq','wwwwww','eeeeeee','qweqwe','qweqweqwe','aaaaaaa']})
 		c.getSlidersize = jest.fn(()=>500)
 		c.init()
 	})
-	test('slider exists',()=>{
-		expect(c.view.slider).toBeDefined()
-	})
-	test('correct number of model handles array items',()=>{
-		expect(c.model.handlePos.length).toBe(initOptions.handles)
-		expect(c.model.handleSteps.length).toBe(initOptions.handles)
-		expect(c.view.handles.length).toBe(initOptions.handles)
-	})
-	test('coorect number of handles appended to slider',()=>{
-		expect(c.view.slider.axis.children('.handle').length).toBe(initOptions.handles)
-	})
-	test('getslidersize to be called',()=>{
-		expect(c.getSlidersize).toBeCalled()
-	})
-	test('slidersize != 0',()=>{
-		expect(c.options.slidersize).not.toBe(0)
-	})
-	test('handles initial pos',()=>{
-		$(c.options.initialValues).each((i,el)=>{
-			if(c.model.handlePos[i]){
-				const pos = c.model.computePosByValue(el)
-				expect(c.model.handlePos[i]).toBe(pos)
-			}
+	test('typeof initialValues != typeof values',()=>{
+		expect(c.options.initialValues).toEqual(c.options.values)
+		expect(c.model.handlePos.length).toEqual(c.options.handles)
+		$(c.model.handlePos).each((i,el)=>{
+			expect(el).toBe(c.options.singleStep*i)
 		})
 	})
-	test('checking type of values & initialValues',()=>{
-		expect(c.options.type).toEqual(typeof c.options.values[0])
-		expect(c.options.type).toEqual(typeof c.options.initialValues[0])
+	test('setHandle',()=>{
+		const event = $.Event('mousemove')
+		event.pageX = 251
+		event.pageY = 251
+		c.mousedown=true
+		c.setHandle(event)
+		expect(c.model.handlePos[0]).toBe(300)
+		expect(c.model.handleSteps[0]).toBe(3)
+		expect(c.view.handles[0].handle.css('left')).toBe('300px')
+	})
+	test('setHandleByValue',()=>{
+		c.setHandleByValue('eeeeeee',0)
+		expect(c.model.handlePos[0]).toBe(200)
+		expect(c.model.handleSteps[0]).toBe(2)
+		expect(c.view.handles[0].handle.css('left')).toBe('200px')
+		c.setHandleByValue('111111',0)
+		expect(c.model.handlePos[0]).toBe(0)
+		expect(c.model.handleSteps[0]).toBe(0)
+		expect(c.view.handles[0].handle.css('left')).toBe('0px')
+	})
+	test('mousemove',()=>{
+		c.view.handles[0].handle.trigger('mousedown')
+		const e = $.Event('mousemove')
+		e.pageX = 349
+		$(document).trigger(e)
+		expect(c.model.handlePos[0]).toBe(300)
+		expect(c.model.handleSteps[0]).toBe(3)
+		expect(c.view.handles[0].handle.css('left')).toBe('300px')
+		expect(c.view.handles[0].title.text()).toBe('qweqwe')
+		expect(c.view.slider.range.css('width')).toBe('200px')
+		expect(c.view.slider.range.css('left')).toBe('100px')
 	})
 });

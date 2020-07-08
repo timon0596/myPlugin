@@ -10,6 +10,20 @@ export class Controller{
 		this.model = new Model(this.options)
 		this.view = new View(this.options)
 		this.init() 
+		
+		$(document).mouseup(()=>{
+			this.mousedown = false
+		})
+		$(document).mousemove((e)=>{
+			this.setHandle(e)
+		})
+	}
+
+	init():void{
+		this.options.vertical?this.view.vertical():0
+		!this.options.range?this.view.rangeOff():0
+		this.optionsValidation()
+		this.view.scaleValuesInit()
 		this.view.handles.forEach((el:Handle,i:number)=>{
 			if(this.options.initialValues[i]){
 				this.model.computePosByValue(this.options.initialValues[i],i)
@@ -22,19 +36,6 @@ export class Controller{
 				this.mousedown = true
 			})
 		})
-		$(document).mouseup(()=>{
-			this.mousedown = false
-		})
-		$(document).mousemove((e)=>{
-			this.setHandle(e)
-		})
-	}
-
-	init():void{
-		this.options.vertical?this.view.vertical():0
-		!this.options.range?this.view.rangeOff:0
-		this.optionsValidation()
-		this.view.scaleValuesInit()
 	}
 	getSlidersize():number{
 		return this.view.slider.slider[0][this.options.vertical?'offsetHeight':'offsetWidth']
