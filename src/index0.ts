@@ -1,5 +1,5 @@
 const c:any = []
-const opts:options[] = [{vertical:true}]
+const opts:options[] = [{values: [100,600],step: 13,initialValues:[200,250,10],handles: 3}]
 $('.js-test').each((i,el)=>{
 	c[i] = $(el).timonSliderPlugin(opts[i]).controller
 	$(el).find('.inputPanel').append(
