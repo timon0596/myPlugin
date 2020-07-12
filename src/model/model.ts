@@ -7,7 +7,7 @@ export class Model{
 			this.handleSteps.push(0)
 		}
 	}
-	computePos({pageX: x,pageY: y}:MouseEvent|JQuery.MouseMoveEvent,i:number,{offsetTop:top,offsetLeft:left,offsetHeight:height}:boundingRect):void{
+	computePos({pageX: x,pageY: y}:JQuery.ClickEvent|JQuery.MouseMoveEvent,i:number,{offsetTop:top,offsetLeft:left,offsetHeight:height}:boundingRect):void{
 		const pos = this.options.vertical?
 			top + height - y - this.handlePos[i]:
 			x-left-this.handlePos[i]
@@ -45,6 +45,7 @@ export class Model{
 	}
 	range():range{
 		const start = this.handlePos.length<2?0:Math.min(...this.handlePos)
+		console.log(this.handlePos)
 		return {start,lngt: Math.max(...this.handlePos) - start}
 	}
 }

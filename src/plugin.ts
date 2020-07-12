@@ -7,13 +7,16 @@ interface JQuery {
 		let initOptions:initOptions = {
 			
 			vertical: false,
-			step:1,
-			handles:2,
+			step:2,
+			handles:3,
 			title:true,
 			range:true,
-			// values: ['1','2','3','4','5','1','2','3','4','5'],
-			values: [123,567],
-			initialValues:[234,262,125],
+			values: ['1','2','3','4','5','1','2','3','4','5'],
+			// values: [123,567],
+			// initialValues:['3','4','5'],
+			// initialValues:[-1000,-1000],
+			initialValues:['223','2224','5222222'],
+			
 			type: 'string',
 			slidersize: 0,
 			stepsize: 0,

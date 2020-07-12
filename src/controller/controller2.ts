@@ -17,6 +17,10 @@ export class Controller{
 		$(document).mousemove((e)=>{
 			this.setHandle(e)
 		})
+		this.view.slider.slider.click((e)=>{
+			this.setHandle(e)
+		})
+		$(window).on('resize',this.reinit.bind(this))
 	}
 
 	init():void{
@@ -40,8 +44,8 @@ export class Controller{
 	getSlidersize():number{
 		return this.view.slider.slider[0][this.options.vertical?'offsetHeight':'offsetWidth']
 	}
-	setHandle(e:MouseEvent|JQuery.MouseMoveEvent):void{
-		if(this.mousedown){
+	setHandle(e:JQuery.ClickEvent|JQuery.MouseMoveEvent):void{
+		if(this.mousedown||e.type=='click'){
 			this.model.computePos(e,this.currentHandle,this.view.slider.slider[0])
 			this.view.setHandle(this.model.handlePos[this.currentHandle],this.currentHandle)
 			this.view.setTitle(this.model.computeTitle(this.currentHandle),this.currentHandle)
@@ -93,10 +97,16 @@ export class Controller{
 		this.options.singleStep = this.options.type=='string'?
 			this.options.slidersize/(this.options.values.length-1):this.options.slidersize/this.options.diapason
 		this.options.stepsize = this.options.singleStep*this.options.step
+		this.model.handlePos = this.model.handlePos.map((el,i)=>{
+			return this.options.singleStep*this.model.handleSteps[i]
+		})
+
+
 		this.view.handles.forEach((el:Handle,i:number)=>{
 			this.view.setHandle(this.model.handleSteps[i]*this.options.singleStep,i)
 			this.view.setTitle(this.model.computeTitle(i),i)
 		})
+
 		this.options.range?this.view.setRange(this.model.range()):0
 		this.view.scaleValues()
 	}

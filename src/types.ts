@@ -76,7 +76,7 @@ type model = {
 	handlePos:number[]
 	handleSteps:number[]
 
-	computePos: (e:MouseEvent|JQuery.MouseMoveEvent,i:number,br:boundingRect)=>void
+	computePos: (e:JQuery.ClickEvent|JQuery.MouseMoveEvent,i:number,br:boundingRect)=>void
 
 	computeTitle: (i:number) => string|number
 
