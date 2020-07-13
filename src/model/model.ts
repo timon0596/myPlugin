@@ -26,7 +26,9 @@ export class Model{
 			return this.options.type=='string'?this.options.values[index]:<number>this.handleSteps[i]+<number>this.options.values[0]
 	}
 	computePosByValue(value:string|number,index:number):void{
-
+		if(isNaN(Number(value))&&this.options.type=='number'){
+			return
+		}
 		if(this.options.type=='string'){
 
 			const i=this.options.values.indexOf(<never>value)
