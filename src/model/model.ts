@@ -47,7 +47,6 @@ export class Model{
 	}
 	range():range{
 		const start = this.handlePos.length<2?0:Math.min(...this.handlePos)
-		console.log(this.handlePos)
 		return {start,lngt: Math.max(...this.handlePos) - start}
 	}
 }

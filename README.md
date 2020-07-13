@@ -1,3 +1,5 @@
+https://timon0596.github.io/myPlugin-test-page/
+
 
 $(element).timonSliderPlugin() - инициализация слайдера с настройками по умолчанию
 
