@@ -26,6 +26,7 @@ export class Controller{
 	init():void{
 		this.options.vertical?this.view.vertical():0
 		!this.options.range?this.view.rangeOff():0
+		this.options.el.append(this.view.slider.slider)
 		this.optionsValidation()
 		this.view.scaleValuesInit()
 		this.view.handles.forEach((el:Handle,i:number)=>{
@@ -68,7 +69,6 @@ export class Controller{
 			this.options.initialValues=[...this.options.values]
 		}
 		this.options.diapason = this.options.type=='number'?Math.abs(this.options.values[0]-this.options.values[1]):0
-		this.options.el.append(this.view.slider.slider)
 		this.options.slidersize = this.getSlidersize()
 		this.options.singleStep = this.options.type=='string'?
 			this.options.slidersize/(this.options.values.length-1):this.options.slidersize/this.options.diapason
@@ -100,7 +100,6 @@ export class Controller{
 		this.model.handlePos = this.model.handlePos.map((el,i)=>{
 			return this.options.singleStep*this.model.handleSteps[i]
 		})
-
 
 		this.view.handles.forEach((el:Handle,i:number)=>{
 			this.view.setHandle(this.model.handleSteps[i]*this.options.singleStep,i)

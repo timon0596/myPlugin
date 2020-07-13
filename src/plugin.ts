@@ -8,15 +8,14 @@ interface JQuery {
 			
 			vertical: false,
 			step:2,
-			handles:3,
+			handles:1,
 			title:true,
 			range:true,
-			values: ['1','2','3','4','5','1','2','3','4','5'],
+			values: ['aaa','sss','ddd','fff','qqq','www','eee','rrr','zzz','xxx'],
 			// values: [123,567],
 			// initialValues:['3','4','5'],
 			// initialValues:[-1000,-1000],
-			initialValues:['223','2224','5222222'],
-			
+			initialValues:['qqq','www','eee'],
 			type: 'string',
 			slidersize: 0,
 			stepsize: 0,
