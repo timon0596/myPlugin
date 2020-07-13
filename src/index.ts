@@ -1,7 +1,6 @@
 import "./index.pug"
-import './plugin.ts'
 import './style.sass'
-import './types'
+import './plugin.ts'
 const c:any = []
 const opts:options[] = 
 [

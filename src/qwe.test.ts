@@ -1,4 +1,4 @@
-import {Controller} from './controller/controller2'
+import {Controller} from './controller/controller'
 import $ from 'jquery'
 const initOptions:initOptions = {
 			vertical: false,

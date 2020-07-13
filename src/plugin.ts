@@ -1,7 +1,6 @@
-import {Controller} from './controller/controller2'
-
+import {Controller} from './controller/controller'
 (function($){
-	$.fn.timonSliderPlugin = function(options:options){
+	$.fn.timonSliderPlugin = function(options?: options){
 		let initOptions:initOptions = {
 			
 			vertical: false,
@@ -10,9 +9,6 @@ import {Controller} from './controller/controller2'
 			title:true,
 			range:true,
 			values: ['aaa','sss','ddd','fff','qqq','www','eee','rrr','zzz','xxx'],
-			// values: [123,567],
-			// initialValues:['3','4','5'],
-			// initialValues:[-1000,-1000],
 			initialValues:['qqq','www','eee'],
 			type: 'string',
 			slidersize: 0,
@@ -38,9 +34,6 @@ import {Controller} from './controller/controller2'
 }(jQuery))
 
 
-interface JQuery {
-   timonSliderPlugin(options?: options): any
-}
 
 
 
