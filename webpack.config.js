@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const HtmlWebpackPugPlugin = require('html-webpack-pug-plugin');
 const MiniCssExtractPlugin=require('mini-css-extract-plugin')
 const autoprefixer = require('autoprefixer')
-
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 // const autoprefixer = require('autoprefixer');
 module.exports = {
 	
@@ -83,7 +83,7 @@ module.exports = {
        }]
 	},
 	plugins:[
-		
+		new CleanWebpackPlugin(),
 		new HWP({
 			template: './src/index.pug',
 			filename: 'index.html'

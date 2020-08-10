@@ -1,0 +1,46 @@
+$slider: #b5e7a0
+$handle: #86af49
+$brd: #e3eaa7
+.example
+	display: grid
+	grid-gap: 50px
+.js-test
+	width: 80%
+	height: 500px
+	padding: 10px
+	display: -webkit-flex
+	display: -moz-flex
+	display: -ms-flex
+	display: -o-flex
+	display: flex
+	justify-content: center
+	flex-wrap: wrap
+	justify-content: space-around
+	.inputPanel
+		display: -webkit-flex
+		display: -moz-flex
+		display: -ms-flex
+		display: -o-flex
+		display: flex
+		flex-direction: column
+		margin-left: 2rem
+		input
+			order: -1
+.slider
+	width: 100%
+	background: $slider
+	height: 10px
+	position: relative
+.handle
+	position: absolute
+	width: 20px
+	height: 20px
+	background: $handle
+	border-radius: 50%
+	top: 50%
+	left: 0
+	transform-origin: 50% 50%
+	transform: translate(-50%, -50%)
+	cursor: pointer
+	opacity: 50%
+

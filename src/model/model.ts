@@ -1,52 +1,41 @@
 export class Model{
-	handlePos:number[]=[]
-	handleSteps:number[]=[]
-	constructor(public options:initOptions){
-		for(let i=0;i<this.options.handles;i++){
-			this.handlePos.push(0)
-			this.handleSteps.push(0)
-		}
+	private singleStep=0
+	private stepSize=0
+	private handlePosition=0
+	private sliderSize = 0
+	private type: string
+	private el:any = {}
+	constructor(private options:any){
+		this.type = typeof this.options.values[0]
 	}
-	computePos({pageX: x,pageY: y}:JQuery.ClickEvent|JQuery.MouseMoveEvent,i:number,{offsetTop:top,offsetLeft:left,offsetHeight:height}:boundingRect):void{
-		const pos = this.options.vertical?
-			top + height - y - this.handlePos[i]:
-			x-left-this.handlePos[i]
-		const pos1 = this.options.vertical?
-			top + height - y:
-			x-left
-			
-			this.handlePos[i]+=Math.abs(pos)/this.options.stepsize>1?Math.round(pos/this.options.stepsize)*this.options.stepsize:0
-			this.handlePos[i] = pos1>this.options.slidersize?
-				this.options.slidersize:
-				pos1<0? 0:this.handlePos[i]
-			this.handleSteps[i] = Math.round(this.handlePos[i]/this.options.singleStep)
+	get handlePos(){
+		return this.handlePosition
 	}
-	computeTitle(i:number):string|number{
-			const index = this.handleSteps[i]
-			return this.options.type=='string'?this.options.values[index]:<number>this.handleSteps[i]+<number>this.options.values[0]
+	computeSliderSize(slider:HTMLElement):void{
+		this.sliderSize = slider.getBoundingClientRect()[this.options.vertical?'height':'width']
+		console.log(slider.getBoundingClientRect().width)
 	}
-	computePosByValue(value:string|number,index:number):void{
-		if(isNaN(Number(value))&&this.options.type=='number'){
-			return
-		}
-		if(this.options.type=='string'){
-
-			const i=this.options.values.indexOf(<never>value)
-			this.handleSteps[index]=i!=-1?i:0
-			this.handlePos[index]=this.handleSteps[index]*this.options.singleStep
+	computeSingleStep():void{
+		if(this.type=='string'){
+			this.singleStep = this.sliderSize/(this.options.values.length-1)
 		}
 		else{
-			this.handleSteps[index] = Number(value)>this.options.values[1]?
-				<number>this.options.values[1]:
-				Number(value)<this.options.values[0]?
-					<number>this.options.values[0]:Number(value)
-			this.handleSteps[index]=this.handleSteps[index]-<number>this.options.values[0]
-			this.handlePos[index]=this.handleSteps[index]*this.options.singleStep
+			this.singleStep =  this.sliderSize/(this.options.values[1]-this.options.values[0])
 		}
-
 	}
-	range():range{
-		const start = this.handlePos.length<2?0:Math.min(...this.handlePos)
-		return {start,lngt: Math.max(...this.handlePos) - start}
+	computeStepSize(){
+		this.stepSize = this.singleStep*this.options.step
+	}
+	computeHandlePosition(e:JQuery.MouseMoveEvent,slider:HTMLElement):void{
+		if(this.options.vertical){
+			this.handlePosition = 0
+		}
+		else{
+			const mousePosition =  e.pageX-slider.offsetLeft
+			const handleSteps = Math.round((mousePosition - this.handlePosition)/this.stepSize)
+			this.handlePosition+= handleSteps*this.stepSize
+			this.handlePosition = this.handlePosition<0?0:this.handlePosition
+			this.handlePosition = this.handlePosition>this.sliderSize?this.sliderSize:this.handlePosition
+		}
 	}
 }
