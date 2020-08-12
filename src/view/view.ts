@@ -21,10 +21,10 @@ export class View {
 	}
 	private handle = new Handle()
 	private slider = new Slider()
-	getSlider():JQuery<HTMLElement>{
+	get Slider():JQuery<HTMLElement>{
 		return this.slider.$slider
 	}
-	getHandle():JQuery<HTMLElement>{
+	get Handle():JQuery<HTMLElement>{
 		return this.handle.$handle
 	}
 	setHandlePosition(pos:number){

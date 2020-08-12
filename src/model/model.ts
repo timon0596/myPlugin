@@ -11,9 +11,9 @@ export class Model{
 	get handlePos(){
 		return this.handlePosition
 	}
-	computeSliderSize(slider:HTMLElement):void{
-		this.sliderSize = slider.getBoundingClientRect()[this.options.vertical?'height':'width']
-		console.log(slider.getBoundingClientRect().width)
+	computeSliderSize(slider:JQuery<HTMLElement>):void{
+		this.sliderSize = slider[0].getBoundingClientRect()[this.options.vertical?'height':'width']
+		console.log(slider[0].getBoundingClientRect().width)
 	}
 	computeSingleStep():void{
 		if(this.type=='string'){
@@ -26,14 +26,15 @@ export class Model{
 	computeStepSize(){
 		this.stepSize = this.singleStep*this.options.step
 	}
-	computeHandlePosition(e:JQuery.MouseMoveEvent,slider:HTMLElement):void{
+	computeHandlePosition(e:JQuery.MouseMoveEvent|JQuery.ClickEvent,slider:JQuery<HTMLElement>):void{
 		if(this.options.vertical){
 			this.handlePosition = 0
 		}
 		else{
-			const mousePosition =  e.pageX-slider.offsetLeft
-			const handleSteps = Math.round((mousePosition - this.handlePosition)/this.stepSize)
-			this.handlePosition+= handleSteps*this.stepSize
+
+			const mousePosition =  e.pageX-slider[0].offsetLeft
+			const handleSteps = Math.round((mousePosition - this.handlePosition)/(e.type=='click'?this.singleStep:this.stepSize))
+			this.handlePosition+= handleSteps*(e.type=='click'?this.singleStep:this.stepSize)
 			this.handlePosition = this.handlePosition<0?0:this.handlePosition
 			this.handlePosition = this.handlePosition>this.sliderSize?this.sliderSize:this.handlePosition
 		}
