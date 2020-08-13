@@ -30,4 +30,7 @@ export class View {
 	setHandlePosition(pos:number){
 		this.handle.$handle.css('left',pos+'px')
 	}
+	setTitleValue(value:string|number){
+		this.handle.$title.text(value)
+	}
 }

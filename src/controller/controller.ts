@@ -13,12 +13,12 @@ export class Controller{
 			this.model.computeSliderSize(this.view.Slider)
 			this.model.computeSingleStep()
 			this.model.computeStepSize()
+			this.setHandle(this.options.values[0])
 		})
 		container.append(this.view.Slider)
-		$(document).on('mousemove.sliderHandleMove',(e)=>{
+		$(document).on('mousemove',(e:JQuery.MouseMoveEvent|JQuery.ClickEvent)=>{
 			if(this.mousedown){
-				this.model.computeHandlePosition(e,this.view.Slider)
-				this.view.setHandlePosition(this.model.handlePos)
+				this.setHandle(e)
 			}
 		})
 		this.view.Handle.on('mousedown',()=>{
@@ -28,9 +28,14 @@ export class Controller{
 			this.mousedown=false
 		})
 		this.view.Slider.click((e:JQuery.ClickEvent)=>{
-			this.model.computeHandlePosition(e,this.view.Slider)
-			this.view.setHandlePosition(this.model.handlePos)
+			this.setHandle(e)
 		})
 	}
-
+	setHandle(e:JQuery.MouseMoveEvent|JQuery.ClickEvent|string|number):void{
+			this.model.computeHandlePosition(e,this.view.Slider)
+			this.view.setHandlePosition(this.model.handlePos)
+			const titleValue = this.model.getTitleValue()
+			this.view.setTitleValue(titleValue)
+	}
+	
 }
