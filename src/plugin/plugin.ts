@@ -1,7 +1,7 @@
 import {Controller} from './../controller/controller'
 (function($){
 	$.fn.timonSliderPlugin = function(options?: options){
-		let defaultOptions:initOptions = {
+		const defaultOptions:initOptions = {
 			vertical: false,
 			step:2,
 			handles:1,

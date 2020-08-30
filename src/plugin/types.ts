@@ -22,3 +22,8 @@ type options = {
 	diapason?:number
 	el?: JQuery
 }
+type handlePosArgument = {
+	i:number
+	e:JQuery.MouseMoveEvent|JQuery.ClickEvent|string|number
+	slider:JQuery<HTMLElement>
+}

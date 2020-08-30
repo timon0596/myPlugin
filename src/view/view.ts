@@ -17,20 +17,22 @@ class Slider{
 
 export class View {
 	constructor(private options:any){
-		this.slider.$slider.append(this.handle.$handle)
+		this.handles.forEach((el)=>{
+			this.slider.$slider.append(el.$handle)
+		})
 	}
-	private handle = new Handle()
+	private handles = new Array(this.options.handles).fill(new Handle())
 	private slider = new Slider()
 	get Slider():JQuery<HTMLElement>{
 		return this.slider.$slider
 	}
-	get Handle():JQuery<HTMLElement>{
-		return this.handle.$handle
+	Handle(i:number):JQuery<HTMLElement>{
+		return this.handles[i].$handle
 	}
-	setHandlePosition(pos:number){
-		this.handle.$handle.css('left',pos+'px')
+	setHandlePosition(i:number,pos:number):void{
+		this.handles[i].$handle.css('left',pos+'px')
 	}
-	setTitleValue(value:string|number){
-		this.handle.$title.text(value)
+	setTitleValue(i:number,value:string|number):void{
+		this.handles[i].$title.text(value)
 	}
 }
