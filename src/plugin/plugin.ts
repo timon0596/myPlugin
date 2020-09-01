@@ -1,7 +1,7 @@
 import {Controller} from './../controller/controller'
 (function($){
-	$.fn.timonSliderPlugin = function(options?: options){
-		const defaultOptions:initOptions = {
+	$.fn.timonSliderPlugin = function(options?: any){
+		const defaultOptions:any = {
 			vertical: false,
 			step:2,
 			handles:1,
@@ -10,9 +10,9 @@ import {Controller} from './../controller/controller'
 			values: ['aaa','sss','ddd','fff','qqq','www','eee','rrr','zzz','xxx'],
 			initialValues:['qqq','www','eee'],
 		}
-		const initOptions = {...defaultOptions,...options,el: $(this)}
+		const initOptions = {...defaultOptions,...options,$el: $(this)}
 		const controller = new Controller(initOptions)
-		controller.init(this)
+		
 		return new Proxy(this,{
 			get(target:any,prop){
 				switch(prop){

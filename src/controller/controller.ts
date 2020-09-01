@@ -1,43 +1,39 @@
 import {Model} from './../model/model'
 import {View} from './../view/view'
-import $ from 'jquery'
 export class Controller{
-  model: any = new Model(this.options)
-  view: any = new View(this.options)
-  private mousedown=false
+  private model = new Model(this.options)
+  private view = new View(this.options)
+  private currentHandle = 0
+  private mousedown = false
   constructor(private options:any){
-
-  }
-  init(container: JQuery):void{
     $(document).ready(()=>{
-      this.model.computeSliderSize(this.view.Slider)
-      this.model.computeSingleStep()
-      this.model.computeStepSize()
-      this.setHandle(this.options.values[0])
-    })
-    container.append(this.view.Slider)
-    $(document).on('mousemove',this.onMousemoveHandler.bind(this))
-    this.view.Handle.on('mousedown',this.onMousedownHandler.bind(this))
-    $(document).on('mouseup',this.onMouseupHandler.bind(this))
-    this.view.Slider.click((e:JQuery.ClickEvent)=>{
-      this.setHandle(e)
+      this.init()
     })
   }
-  setHandle(e:JQuery.MouseMoveEvent|JQuery.ClickEvent|string|number):void{
-      this.model.computeHandlePosition(e,this.view.Slider)
-      this.view.setHandlePosition(this.model.handlePos)
-      const titleValue = this.model.getTitleValue()
-      this.view.setTitleValue(titleValue)
+  init():void{
+    this.model.defineSliderSize(this.view.$slider)
+    this.model.defineSinglStep()
+    this.model.defineStepSize()
+    this.setEventHandlers()
   }
-  onMousemoveHandler(e:JQuery.MouseMoveEvent|JQuery.ClickEvent){
+  setEventHandlers():void{
+    this.view.$handles.forEach((el,i)=>{
+      el.on('mousedown',this.onMousedown.bind(this))
+    })
+    $(document).on('mousemove',this.onMousemove.bind(this))
+    $(document).on('mouseup',this.onMouseup.bind(this))
+  }
+  onMousedown(e:any):void{
+    this.mousedown = true
+    this.currentHandle = this.view.$handles.map(el=>el[0]).indexOf(e.target)
+  }
+  onMousemove(e:any):void{
     if(this.mousedown){
-      this.setHandle(e)
+      this.model.handlePosByEvent({e,i:this.currentHandle,slider:this.view.$slider})
+      this.view.setHandle({i:this.currentHandle,pos: this.model.handlePos(this.currentHandle)})
     }
   }
-  onMousedownHandler(){
-    this.mousedown=true
-  }
-  onMouseupHandler(){
-    this.mousedown=false
+  onMouseup(){
+    this.mousedown = false
   }
 }
