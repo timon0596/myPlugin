@@ -1,3 +1,3 @@
 interface JQuery {
-   timonSliderPlugin(options?: options): any
+  timonSliderPlugin(options?: any): any;
 }

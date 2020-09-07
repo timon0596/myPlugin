@@ -1,37 +1,43 @@
-class Handle{
-  $handle = $('<div>',{class: 'handle'})
-  $title = $('<div>',{class: 'handle__title'})
-  constructor(){
-    this.init()
+class Handle {
+  $handle = $("<div>", { class: "handle" });
+  $title = $("<div>", { class: "handle__title" });
+  constructor() {
+    this.init();
   }
-  init():void{
-    this.$handle.append(this.$title)
+  init(): void {
+    this.$handle.append(this.$title);
   }
 }
-class Slider{
-  $slider = $('<div>',{class: 'slider'})
+class Slider {
+  $slider = $("<div>", { class: "slider" });
 }
-export class View{
-  private handles: Array<Handle>
-  private slider: Slider
-  constructor(private options: any){
-    this.handles = new Array(this.options.handles).fill(new Handle())
-    this.slider = new Slider()
-    this.init()
+export class View {
+  private handles: Array<Handle>;
+  private slider: Slider;
+  constructor(private options: any) {
+    this.handles = new Array(this.options.handles).fill(new Handle());
+    this.slider = new Slider();
+    this.init();
   }
-  init():void{
-    this.handles.forEach((el)=>{
-      this.slider.$slider.append(el.$handle)  
-    })
-    this.options.$el.append(this.slider.$slider)
+  init(): void {
+    this.handles.forEach((el) => {
+      this.slider.$slider.append(el.$handle);
+    });
+    this.options.$el.append(this.slider.$slider);
   }
-  get $slider():JQuery<HTMLElement>{
-    return this.slider.$slider
+  get $slider(): JQuery<HTMLElement> {
+    return this.slider.$slider;
   }
-  get $handles():JQuery<HTMLElement>[]{
-    return this.handles.map(el=>el.$handle)
+  get $handles(): JQuery<HTMLElement>[] {
+    return this.handles.map((el) => el.$handle);
   }
-  setHandle({i,pos}:any):void{
-    this.handles[i].$handle.css(this.options.vertical?'bottom':'left',pos+'px')
+  setHandle({ i, pos }: any): void {
+    this.handles[i].$handle.css(
+      this.options.vertical ? "bottom" : "left",
+      pos + "px"
+    );
+  }
+  setTitle({ i, val }: any): void {
+    this.handles[i].$title.text(val);
   }
 }
