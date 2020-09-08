@@ -32,10 +32,17 @@ export class View {
     return this.handles.map((el) => el.$handle);
   }
   setHandle({ i, pos }: any): void {
-    this.handles[i].$handle.css(
-      this.options.vertical ? "bottom" : "left",
-      pos + "px"
-    );
+    if (pos) {
+      this.handles[i].$handle.css(
+        this.options.vertical ? "bottom" : "left",
+        pos + "px"
+      );
+    } else {
+      this.handles[i].$handle.css(
+        this.options.vertical ? "bottom" : "left",
+        0 + "px"
+      );
+    }
   }
   setTitle({ i, val }: any): void {
     this.handles[i].$title.text(val);

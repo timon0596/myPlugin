@@ -15,6 +15,7 @@ export class Controller {
     this.model.defineSinglStep();
     this.model.defineStepSize();
     this.setEventHandlers();
+    this.setHandles();
   }
   setEventHandlers(): void {
     this.view.$handles.forEach((el, i) => {
@@ -48,5 +49,12 @@ export class Controller {
   }
   onMouseup() {
     this.mousedown = false;
+  }
+  setHandles() {
+    this.view.$handles.forEach((el, i) => {
+      this.model.handlePosByValue({ i, val: this.options.initialValues[i] });
+      this.view.setHandle({ i, pos: this.model.handlePos(i) });
+      this.view.setTitle({ i, val: this.model.handleTitle(i) });
+    });
   }
 }

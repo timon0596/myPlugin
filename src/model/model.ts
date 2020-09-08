@@ -33,6 +33,21 @@ export class Model {
         ? this.sliderSize
         : this.handlePositions[i];
   }
+  handlePosByValue({ i, val }: any) {
+    if (this.type === "number") {
+      this.handlePositions[i] =
+        val < this.options.values[0]
+          ? 0
+          : val > this.options.values[1]
+          ? this.options.values[1]
+          : (val / (this.options.values[1] - this.options.values[0])) *
+            this.sliderSize;
+    } else {
+      const index = this.options.values.indexOf(val);
+      const valIsCorrect = index !== -1;
+      this.handlePositions[i] = valIsCorrect ? index * this.stepSize : 0;
+    }
+  }
   handlePos(i: number): number {
     return this.handlePositions[i];
   }
