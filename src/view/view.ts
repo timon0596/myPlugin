@@ -15,12 +15,16 @@ export class View {
   private handles: Array<Handle>;
   private slider: Slider;
   constructor(private options: any) {
-    this.handles = new Array(this.options.handles).fill(new Handle());
+    this.handles = new Array(this.options.handles).fill(null).map((el, i) => {
+      return new Handle();
+    });
     this.slider = new Slider();
     this.init();
   }
   init(): void {
+    console.log(this.handles);
     this.handles.forEach((el) => {
+      console.log(el.$handle);
       this.slider.$slider.append(el.$handle);
     });
     this.options.$el.append(this.slider.$slider);

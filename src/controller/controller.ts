@@ -1,14 +1,16 @@
 import { Model } from "./../model/model";
 import { View } from "./../view/view";
 export class Controller {
-  private model = new Model(this.options);
-  private view = new View(this.options);
+  private model: any;
+  private view: any;
   private currentHandle = 0;
   private mousedown = false;
   constructor(private options: any) {
-    $(document).ready(() => {
+    this.view = new View(this.options);
+    this.model = new Model(this.options);
+    setTimeout(() => {
       this.init();
-    });
+    }, 2000);
   }
   init(): void {
     this.model.defineSliderSize(this.view.$slider);
@@ -18,7 +20,7 @@ export class Controller {
     this.setHandles();
   }
   setEventHandlers(): void {
-    this.view.$handles.forEach((el, i) => {
+    this.view.$handles.forEach((el: JQuery<HTMLElement>, i: number) => {
       el.on("mousedown", this.onMousedown.bind(this));
     });
     $(document).on("mousemove", this.onMousemove.bind(this));
@@ -27,7 +29,7 @@ export class Controller {
   onMousedown(e: any): void {
     this.mousedown = true;
     this.currentHandle = this.view.$handles
-      .map((el) => el[0])
+      .map((el: JQuery<HTMLElement>) => el[0])
       .indexOf(e.target);
   }
   onMousemove(e: any): void {
@@ -51,7 +53,7 @@ export class Controller {
     this.mousedown = false;
   }
   setHandles() {
-    this.view.$handles.forEach((el, i) => {
+    this.view.$handles.forEach((el: JQuery<HTMLElement>, i: number) => {
       this.model.handlePosByValue({ i, val: this.options.initialValues[i] });
       this.view.setHandle({ i, pos: this.model.handlePos(i) });
       this.view.setTitle({ i, val: this.model.handleTitle(i) });

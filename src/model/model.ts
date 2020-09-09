@@ -12,6 +12,7 @@ export class Model {
     this.sliderSize = slider[0].getBoundingClientRect()[
       this.options.vertical ? "height" : "width"
     ];
+    console.log(this.sliderSize);
   }
   defineSinglStep(): void {
     this.singleStep =
@@ -33,14 +34,15 @@ export class Model {
         ? this.sliderSize
         : this.handlePositions[i];
   }
-  handlePosByValue({ i, val }: any) {
+  handlePosByValue({ i, val }: any): void {
     if (this.type === "number") {
       this.handlePositions[i] =
         val < this.options.values[0]
           ? 0
           : val > this.options.values[1]
           ? this.options.values[1]
-          : (val / (this.options.values[1] - this.options.values[0])) *
+          : ((val - this.options.values[0]) /
+              (this.options.values[1] - this.options.values[0])) *
             this.sliderSize;
     } else {
       const index = this.options.values.indexOf(val);
@@ -54,7 +56,9 @@ export class Model {
   handleTitle(i: number): string {
     if (this.type === "number") {
       return (
-        this.handlePositions[i] / this.singleStep + this.options.values[0] + ""
+        Math.round(
+          this.handlePositions[i] / this.singleStep + this.options.values[0]
+        ) + ""
       );
     } else {
       const index = this.handlePositions[i] / this.singleStep;
