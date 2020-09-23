@@ -1,54 +1,39 @@
-class Handle {
-  $handle = $("<div>", { class: "handle" });
-  $title = $("<div>", { class: "handle__title" });
-  constructor() {
-    this.init();
-  }
-  init(): void {
-    this.$handle.append(this.$title);
-  }
-}
 class Slider {
   $slider = $("<div>", { class: "slider" });
-}
-export class View {
-  private handles: Array<Handle>;
-  private slider: Slider;
-  constructor(private options: any) {
-    this.handles = new Array(this.options.handles).fill(null).map((el, i) => {
-      return new Handle();
-    });
-    this.slider = new Slider();
+  $handleWrappers: any;
+  constructor(amount: number) {
+    this.$handleWrappers = new Array(amount)
+      .fill(null)
+      .map((el) => $("<div>", { class: "slider__handle-wrapper" }));
     this.init();
   }
-  init(): void {
-    console.log(this.handles);
-    this.handles.forEach((el) => {
-      console.log(el.$handle);
-      this.slider.$slider.append(el.$handle);
+  toVert() {
+    this.$slider.addClass("slider_vertical");
+  }
+  toHor() {
+    this.$slider.removeClass("slider_vertical");
+  }
+  init() {
+    this.$handleWrappers.map((el: any) => {
+      this.$slider.append(el);
     });
+  }
+}
+class Handle {
+  $handle = $("<div>", { class: "handle" });
+}
+export class View {
+  private slider = new Slider(this.options.handles);
+  private $handles: any;
+  constructor(private options: any) {
+    this.$handles = new Array(this.options.handles)
+      .fill(null)
+      .map((el) => new Handle());
     this.options.$el.append(this.slider.$slider);
+
+    this.slider.$handleWrappers.map((el: any, i: any) => {
+      el.append(this.$handles[i].$handle);
+    });
   }
-  get $slider(): JQuery<HTMLElement> {
-    return this.slider.$slider;
-  }
-  get $handles(): JQuery<HTMLElement>[] {
-    return this.handles.map((el) => el.$handle);
-  }
-  setHandle({ i, pos }: any): void {
-    if (pos) {
-      this.handles[i].$handle.css(
-        this.options.vertical ? "bottom" : "left",
-        pos + "px"
-      );
-    } else {
-      this.handles[i].$handle.css(
-        this.options.vertical ? "bottom" : "left",
-        0 + "px"
-      );
-    }
-  }
-  setTitle({ i, val }: any): void {
-    this.handles[i].$title.text(val);
-  }
+  setHandle({ i, pos }: any) {}
 }

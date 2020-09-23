@@ -6,8 +6,8 @@ const opts: any[] = [
   {
     values: [100, 600],
     step: 13,
-    initialValues: [200, 250, 10],
     handles: 2,
+    vertical: true,
   },
   {
     values: ["1", "2", "3", "4", "q", "w", "e", "r", "t"],
