@@ -25,6 +25,7 @@ class Handle {
 export class View {
   private slider = new Slider(this.options.handles);
   private $handles: any;
+  HandleWrappers = this.slider.$handleWrappers;
   constructor(private options: any) {
     this.$handles = new Array(this.options.handles)
       .fill(null)
@@ -35,5 +36,13 @@ export class View {
       el.append(this.$handles[i].$handle);
     });
   }
-  setHandle({ i, pos }: any) {}
+  sliderRect() {
+    return this.slider.$slider[0].getBoundingClientRect();
+  }
+  setHandle({ i, pos }: any) {
+    this.HandleWrappers[i].css(
+      this.options.vertical ? "bottom" : "left",
+      pos + "px"
+    );
+  }
 }

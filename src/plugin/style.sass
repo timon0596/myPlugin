@@ -26,3 +26,29 @@ $brd: #e3eaa7
 		margin-left: 2rem
 		input
 			order: -1
+
+.slider
+	position: relative
+	width: 100%
+	height: 10px
+	background: $slider
+
+	&__handle-wrapper
+		position: absolute
+		left: 0
+		bottom: -150%
+		transform: translate(-50%, -50%)
+
+	&_vertical &__handle-wrapper
+		left: 50%
+		bottom: 0
+
+	&_vertical
+		height: 100%
+		width: 10px
+
+.handle
+	width: 20px
+	height: 20px
+	border-radius: 50%
+	background: $handle
