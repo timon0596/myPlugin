@@ -5,6 +5,7 @@ const c: any = [];
 const opts: any[] = [
   {
     values: [100, 600],
+    initialValues: [200, 250, 10],
     step: 13,
     handles: 2,
     vertical: false,

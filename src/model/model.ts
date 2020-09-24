@@ -40,7 +40,6 @@ export class Model {
     }
 
     const delta = (pos - this.positions[i]) / this.stepSize;
-    console.log(delta);
     this.positions[i] +=
       Math.abs(delta) > 1 ? Math.round(delta) * this.stepSize : 0;
     this.positions[i] =
