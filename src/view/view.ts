@@ -27,6 +27,7 @@ export class View {
   private $handles: any;
   HandleWrappers = this.slider.$handleWrappers;
   constructor(private options: any) {
+    this.options.vertical ? this.slider.toVert() : 0;
     this.$handles = new Array(this.options.handles)
       .fill(null)
       .map((el) => new Handle());
