@@ -6,10 +6,12 @@ export class Model {
   mousedown = false;
   positions: any;
   type = "number";
+  private dimension = this.options.vertical?'height':'width'
   constructor(private options: any) {
     this.positions = new Array(this.options.handles).fill(0);
     this.init();
   }
+
   init() {
     this.type = typeof this.options.values[0];
   }
@@ -17,12 +19,12 @@ export class Model {
   defineSingleStep(sliderRect: any): number {
     if (this.type === "number") {
       return (
-        sliderRect[this.options.vertical ? "height" : "width"] /
+        sliderRect[this.dimension] /
         (this.options.values[1] - this.options.values[0])
       );
     } else {
       return (
-        sliderRect[this.options.vertical ? "height" : "width"] /
+        sliderRect[this.dimension] /
         (this.options.values.length - 1)
       );
     }
@@ -33,7 +35,6 @@ export class Model {
   }
 
   position({ e, i }: any) {
-    const dimension = this.options.vertical?'height':'width'
     let pos = 0;
     if (this.options.vertical) {
       pos = this.sliderRect.top + this.sliderRect.height - e.pageY
@@ -45,11 +46,19 @@ export class Model {
     this.positions[i] +=
       Math.abs(delta) > 1 ? Math.round(delta) * this.stepSize : 0;
     this.positions[i] =
-      this.positions[i] > this.sliderRect[dimension]
-        ? this.sliderRect[dimension]
+      this.positions[i] > this.sliderRect[this.dimension]
+        ? this.sliderRect[this.dimension]
         : this.positions[i] < 0
         ? 0
         : this.positions[i];
     return this.positions[i];
+  }
+
+  getTitleVal(i:number){ 
+    if(this.type==='number'){
+      return this.positions[i] + this.options.values[0]
+    }else{
+      return this.options.values[this.positions[i]/this.stepSize]
+    }
   }
 }

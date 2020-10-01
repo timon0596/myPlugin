@@ -3,9 +3,11 @@ import { View } from "./../view/view";
 export class Controller {
   private view = new View(this.options);
   private model = new Model(this.options);
+
   constructor(private options: any) {
     this.init();
   }
+
   init() {
     this.view.HandleWrappers.forEach((el: any, i: any) => {
       el.mousedown(this.handle$handleWrappersMousedown.bind(this, i));
@@ -16,9 +18,11 @@ export class Controller {
     $(window).mousemove(this.handleWindowMousemove.bind(this));
     $(window).mouseup(this.handleWindowMouseup.bind(this));
   }
+
   setSliderBoundingRect() {
     return this.view.sliderRect();
   }
+
   handleWindowMousemove(e: any) {
     if (this.model.mousedown) {
       this.setHandle(e);
@@ -38,5 +42,14 @@ export class Controller {
     const i = this.model.currentHandle;
     const pos = this.model.position({ e, i });
     this.view.setHandle({ i, pos });
+    this.setTitleVal(i)
   }
+
+  setTitleVal(i:number){
+    const val = this.model.getTitleVal(i)
+    this.view.setTitleVal({i,val})
+
+  }
+
+
 }
