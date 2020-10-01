@@ -41,6 +41,7 @@ export class View {
     return this.slider.$slider[0].getBoundingClientRect();
   }
   setHandle({ i, pos }: any) {
+    console.log(pos)
     this.HandleWrappers[i].css(
       this.options.vertical ? "bottom" : "left",
       pos + "px"

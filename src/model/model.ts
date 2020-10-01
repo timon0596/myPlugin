@@ -33,8 +33,10 @@ export class Model {
   }
 
   position({ e, i }: any) {
+    const dimension = this.options.vertical?'height':'width'
     let pos = 0;
     if (this.options.vertical) {
+      pos = this.sliderRect.top + this.sliderRect.height - e.pageY
     } else {
       pos = e.pageX - this.sliderRect.left;
     }
@@ -43,8 +45,8 @@ export class Model {
     this.positions[i] +=
       Math.abs(delta) > 1 ? Math.round(delta) * this.stepSize : 0;
     this.positions[i] =
-      this.positions[i] > this.sliderRect.width
-        ? this.sliderRect.width
+      this.positions[i] > this.sliderRect[dimension]
+        ? this.sliderRect[dimension]
         : this.positions[i] < 0
         ? 0
         : this.positions[i];
