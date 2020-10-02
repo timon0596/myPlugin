@@ -4,6 +4,7 @@
         "es2020": true
     },
     "extends": [
+        "airbnb-base",
         "plugin:fsd/all",
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
@@ -18,5 +19,6 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "import/prefer-default-export": 0
     }
 }

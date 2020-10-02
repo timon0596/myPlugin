@@ -1,12 +1,20 @@
 export class Model {
   currentHandle = 0;
+
   sliderRect: any;
+
   singleStep = 0;
+
   stepSize = 0;
+
   mousedown = false;
+
   positions: any;
-  type = "number";
-  private dimension = this.options.vertical?'height':'width'
+
+  type = 'number';
+
+  private dimension = this.options.vertical ? 'height' : 'width'
+
   constructor(private options: any) {
     this.positions = new Array(this.options.handles).fill(0);
     this.init();
@@ -17,17 +25,16 @@ export class Model {
   }
 
   defineSingleStep(sliderRect: any): number {
-    if (this.type === "number") {
+    if (this.type === 'number') {
       return (
-        sliderRect[this.dimension] /
-        (this.options.values[1] - this.options.values[0])
-      );
-    } else {
-      return (
-        sliderRect[this.dimension] /
-        (this.options.values.length - 1)
+        sliderRect[this.dimension]
+        / (this.options.values[1] - this.options.values[0])
       );
     }
+    return (
+      sliderRect[this.dimension]
+        / (this.options.values.length - 1)
+    );
   }
 
   defineStepSize(): number {
@@ -37,28 +44,38 @@ export class Model {
   position({ e, i }: any) {
     let pos = 0;
     if (this.options.vertical) {
-      pos = this.sliderRect.top + this.sliderRect.height - e.pageY
+      pos = this.sliderRect.top + this.sliderRect.height - e.pageY;
     } else {
       pos = e.pageX - this.sliderRect.left;
     }
 
     const delta = (pos - this.positions[i]) / this.stepSize;
-    this.positions[i] +=
-      Math.abs(delta) > 1 ? Math.round(delta) * this.stepSize : 0;
-    this.positions[i] =
-      this.positions[i] > this.sliderRect[this.dimension]
-        ? this.sliderRect[this.dimension]
-        : this.positions[i] < 0
+    this.positions[i]
+      += Math.abs(delta) > 1 ? Math.round(delta) * this.stepSize : 0;
+    this.positions[i] = this.positions[i] > this.sliderRect[this.dimension]
+      ? this.sliderRect[this.dimension]
+      : this.positions[i] < 0
         ? 0
         : this.positions[i];
     return this.positions[i];
   }
 
-  getTitleVal(i:number){ 
-    if(this.type==='number'){
-      return this.positions[i] + this.options.values[0]
-    }else{
-      return this.options.values[this.positions[i]/this.stepSize]
+  positionByValue({ val, i }:any) {
+    if (typeof val === 'string') {
+      const index = this.options.values.indexOf(val);
+      const pos = index * this.singleStep;
+      this.positions[i] = pos;
+      return index !== -1 ? pos : 0;
     }
+    const pos = (val - this.options.values[0]) * this.singleStep;
+    this.positions[i] = pos;
+    return pos;
+  }
+
+  getTitleVal(i:number) {
+    if (this.type === 'number') {
+      return Math.round(this.positions[i] / this.singleStep) + this.options.values[0];
+    }
+    return this.options.values[Math.round(this.positions[i] / this.singleStep)];
   }
 }

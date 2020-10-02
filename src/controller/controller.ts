@@ -1,7 +1,9 @@
-import { Model } from "./../model/model";
-import { View } from "./../view/view";
+import { Model } from '../model/model';
+import { View } from '../view/view';
+
 export class Controller {
   private view = new View(this.options);
+
   private model = new Model(this.options);
 
   constructor(private options: any) {
@@ -17,6 +19,37 @@ export class Controller {
     this.model.stepSize = this.model.defineStepSize();
     $(window).mousemove(this.handleWindowMousemove.bind(this));
     $(window).mouseup(this.handleWindowMouseup.bind(this));
+    this.optionsFilter();
+    this.initPositions();
+  }
+
+  optionsFilterCondition(el:any) {
+    if (this.model.type === 'number') {
+      const condition1 = el >= this.options.values[0];
+      const condition2 = el <= this.options.values[1];
+      return condition1 && condition2;
+    }
+    return this.options.values.indexOf(el) !== -1;
+  }
+
+  optionsFilter() {
+    this.options.initialValues = this.options.initialValues
+      .slice(0, this.options.handles)
+      .map((el:any, i:number) => {
+        if (this.optionsFilterCondition(el)) {
+          return el;
+        }
+        return this.options.values[i];
+      });
+  }
+
+  initPositions() {
+    this.view.HandleWrappers.map((el:any, i:number) => {
+      const val = this.options.initialValues[i];
+      if (val !== undefined) {
+        this.setHandleWithVal({ val, i });
+      }
+    });
   }
 
   setSliderBoundingRect() {
@@ -42,14 +75,18 @@ export class Controller {
     const i = this.model.currentHandle;
     const pos = this.model.position({ e, i });
     this.view.setHandle({ i, pos });
-    this.setTitleVal(i)
+    this.setTitleVal(i);
   }
 
-  setTitleVal(i:number){
-    const val = this.model.getTitleVal(i)
-    this.view.setTitleVal({i,val})
-
+  setHandleWithVal({ val, i }:any) {
+    const pos = this.model.positionByValue({ val, i });
+    this.view.setHandle({ i, pos });
+    this.setTitleVal(i);
   }
 
+  setTitleVal(i:number) {
+    const val = this.model.getTitleVal(i);
 
+    this.view.setTitleVal({ i, val });
+  }
 }
