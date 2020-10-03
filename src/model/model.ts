@@ -13,7 +13,7 @@ export class Model {
 
   type = 'number';
 
-  private dimension = this.options.vertical ? 'height' : 'width'
+  private dimension = this.options.vertical ? 'offsetHeight' : 'offsetWidth'
 
   constructor(private options: any) {
     this.positions = new Array(this.options.handles).fill(0);
@@ -44,11 +44,18 @@ export class Model {
   position({ e, i }: any) {
     let pos = 0;
     if (this.options.vertical) {
-      pos = this.sliderRect.top + this.sliderRect.height - e.pageY;
+      pos = this.sliderRect.offsetTop + this.sliderRect.offsetHeight - e.pageY;
     } else {
-      pos = e.pageX - this.sliderRect.left;
+      pos = e.pageX - this.sliderRect.offsetLeft;
     }
-
+    if (pos > this.sliderRect[this.dimension]) {
+      this.positions[i] = this.sliderRect[this.dimension];
+      return this.positions[i];
+    }
+    if (pos < 0) {
+      this.positions[i] = 0;
+      return this.positions[i];
+    }
     const delta = (pos - this.positions[i]) / this.stepSize;
     this.positions[i]
       += Math.abs(delta) > 1 ? Math.round(delta) * this.stepSize : 0;

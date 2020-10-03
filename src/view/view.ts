@@ -1,5 +1,6 @@
 import { Slider } from '../slider/slider';
 import { Handle } from '../handle/handle';
+import { Scale } from '../scale/scale';
 
 export class View {
   private slider = new Slider(this.options.handles);
@@ -8,10 +9,13 @@ export class View {
 
   private $titles: any;
 
+  Scale = new Scale(this.options.vertical)
+
   HandleWrappers = this.slider.$handleWrappers;
 
   constructor(private options: any) {
     this.options.vertical ? this.slider.toVert() : 0;
+    this.slider.$slider.append(this.Scale.$scale);
     this.$handles = new Array(this.options.handles)
       .fill(null)
       .map((el) => new Handle());
@@ -21,10 +25,13 @@ export class View {
     this.slider.$handleWrappers.map((el: any, i: any) => {
       el.append(this.$handles[i].$handle);
     });
+    this.Scale.$limits.forEach((el:any, i:number) => {
+      el.text(this.options.values[i]);
+    });
   }
 
   sliderRect() {
-    return this.slider.$slider[0].getBoundingClientRect();
+    return this.slider.$slider[0];
   }
 
   setHandle({ i, pos }: any) {
