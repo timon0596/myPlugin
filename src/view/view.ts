@@ -9,7 +9,7 @@ export class View {
 
   private $titles: any;
 
-  Scale = new Scale(this.options.vertical)
+  Scale = new Scale(this.options)
 
   HandleWrappers = this.slider.$handleWrappers;
 
@@ -26,7 +26,12 @@ export class View {
       el.append(this.$handles[i].$handle);
     });
     this.Scale.$limits.forEach((el:any, i:number) => {
-      el.text(this.options.values[i]);
+      if (typeof this.options.values[0] === 'number') {
+        el.text(this.options.values[i]);
+      } else {
+        const lng = this.options.values.length;
+        i === 0 ? el.text(this.options.values[i]) : el.text(this.options.values[lng - 1]);
+      }
     });
   }
 
@@ -43,5 +48,15 @@ export class View {
 
   setTitleVal({ i, val }:any) {
     this.$titles[i].text(val);
+  }
+
+  setScaleTipValue({ pos, val }:any) {
+    this.Scale.$tip.show();
+    this.Scale.$tip.text(val);
+    this.Scale.$tip.css(this.options.vertical ? 'bottom' : 'left', `${pos}px`);
+  }
+
+  hideScaleTip() {
+    this.Scale.$tip.hide();
   }
 }

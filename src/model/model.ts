@@ -67,6 +67,30 @@ export class Model {
     return this.positions[i];
   }
 
+  computePosition({ e }: any) {
+    let pos = 0;
+    if (this.options.vertical) {
+      pos = this.sliderRect.offsetTop + this.sliderRect.offsetHeight - e.pageY;
+    } else {
+      pos = e.pageX - this.sliderRect.offsetLeft;
+    }
+    if (pos > this.sliderRect[this.dimension]) {
+      pos = this.sliderRect[this.dimension];
+    }
+    if (pos < 0) {
+      pos = 0;
+    }
+    const tipPos = pos;
+    pos = Math.round(pos / this.singleStep);
+    let val;
+    if (this.type === 'number') {
+      val = pos + this.options.values[0];
+    } else {
+      val = this.options.values[pos];
+    }
+    return { val, pos: tipPos };
+  }
+
   positionByValue({ val, i }:any) {
     if (typeof val === 'string') {
       const index = this.options.values.indexOf(val);

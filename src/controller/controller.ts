@@ -18,9 +18,20 @@ export class Controller {
     this.model.singleStep = this.model.defineSingleStep(this.model.sliderRect);
     this.model.stepSize = this.model.defineStepSize();
     $(window).mousemove(this.handleWindowMousemove.bind(this));
+    $(this.view.Scale.$scale).mousemove(this.handleScaleMousemove.bind(this));
+    $(this.view.Scale.$scale).mouseleave(this.handleScaleMouseleave.bind(this));
     $(window).mouseup(this.handleWindowMouseup.bind(this));
     this.optionsFilter();
     this.initPositions();
+  }
+
+  handleScaleMouseleave(e:any) {
+    this.view.hideScaleTip();
+  }
+
+  handleScaleMousemove(e:any) {
+    const { val, pos } = this.model.computePosition({ e });
+    this.view.setScaleTipValue({ val, pos });
   }
 
   optionsFilterCondition(el:any) {

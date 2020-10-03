@@ -9,19 +9,29 @@ export class Scale {
 
   $limits:any
 
-  constructor(vertical:boolean) {
-    this.init(vertical);
+  constructor(private options:any) {
+    this.init(this.options);
   }
 
-  init(vertical:boolean) {
+  init({ vertical }:any) {
     vertical ? this.$scale.addClass('scale_vertical') : null;
-
     this.$scale.append(this.$limitsWrapper);
     this.$scale.append(this.$delimiters);
+    this.$scale.append(this.$tip);
     new Array(2).fill(0).forEach(() => { this.$limitsWrapper.append($('<div>', { class: 'scale__limit' })); });
     this.$limits = Array.from(this.$limitsWrapper.find('.scale__limit')).map((el:any) => $(el));
     this.$limits = vertical ? this.$limits.reverse() : this.$limits;
-    new Array(20).fill(0).forEach(() => {
+    this.addDelimiters();
+  }
+
+  addDelimiters() {
+    let num;
+    if (typeof this.options.values[0] === 'number') {
+      num = 20;
+    } else {
+      num = this.options.values.length;
+    }
+    new Array(num).fill(0).forEach(() => {
       this.$delimiters.append($('<div>', { class: 'scale__delimiter' }));
     });
   }
