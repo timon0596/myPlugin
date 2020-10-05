@@ -81,14 +81,18 @@ export class Model {
       pos = 0;
     }
     const tipPos = pos;
-    pos = Math.round(pos / this.singleStep);
+    pos = Math.round(pos / this.singleStep) * this.singleStep;
     let val;
     if (this.type === 'number') {
-      val = pos + this.options.values[0];
+      val = Math.round(pos / this.singleStep) + this.options.values[0];
     } else {
       val = this.options.values[pos];
     }
-    return { val, pos: tipPos };
+    return { val, pos, tipPos };
+  }
+
+  updatePosition({ pos, i }:any) {
+    this.positions[i] = pos;
   }
 
   positionByValue({ val, i }:any) {
