@@ -10,4 +10,8 @@ export class Handle {
   init() {
     this.$handle.append(this.$title);
   }
+
+  hideTitle() {
+    this.$title.hide();
+  }
 }

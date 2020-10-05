@@ -86,7 +86,7 @@ export class Model {
     if (this.type === 'number') {
       val = Math.round(pos / this.singleStep) + this.options.values[0];
     } else {
-      val = this.options.values[pos];
+      val = this.options.values[pos / this.singleStep];
     }
     return { val, pos, tipPos };
   }
