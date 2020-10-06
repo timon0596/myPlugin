@@ -11,7 +11,7 @@ export class Handle {
     this.$handle.append(this.$title);
   }
 
-  hideTitle() {
+  noTitle() {
     this.$title.hide();
   }
 }

@@ -1,4 +1,6 @@
 export class Model {
+  handleSteps:any
+
   currentHandle = 0;
 
   sliderRect: any;
@@ -17,6 +19,7 @@ export class Model {
 
   constructor(private options: any) {
     this.positions = new Array(this.options.handles).fill(0);
+    this.handleSteps = new Array(this.options.handles).fill(0);
     this.init();
   }
 
@@ -50,10 +53,12 @@ export class Model {
     }
     if (pos > this.sliderRect[this.dimension]) {
       this.positions[i] = this.sliderRect[this.dimension];
+      this.handleSteps[i] = this.positions[i] / this.singleStep;
       return this.positions[i];
     }
     if (pos < 0) {
       this.positions[i] = 0;
+      this.handleSteps[i] = this.positions[i] / this.singleStep;
       return this.positions[i];
     }
     const delta = (pos - this.positions[i]) / this.stepSize;
@@ -64,6 +69,7 @@ export class Model {
       : this.positions[i] < 0
         ? 0
         : this.positions[i];
+    this.handleSteps[i] = this.positions[i] / this.singleStep;
     return this.positions[i];
   }
 
@@ -93,6 +99,7 @@ export class Model {
 
   updatePosition({ pos, i }:any) {
     this.positions[i] = pos;
+    this.handleSteps[i] = pos / this.singleStep;
   }
 
   positionByValue({ val, i }:any) {
@@ -104,6 +111,7 @@ export class Model {
     }
     const pos = (val - this.options.values[0]) * this.singleStep;
     this.positions[i] = pos;
+    this.handleSteps[i] = this.positions[i] / this.singleStep;
     return pos;
   }
 

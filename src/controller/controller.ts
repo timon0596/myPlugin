@@ -1,28 +1,68 @@
 import { Model } from '../model/model';
 import { View } from '../view/view';
+import { InputPanel } from '../inputPanel/inputPanel';
 
 export class Controller {
   private view = new View(this.options);
 
   private model = new Model(this.options);
 
+  private panel = new InputPanel(this.options);
+
   constructor(private options: any) {
     this.init();
   }
 
+  noTitle() {
+    this.view.noTitle();
+  }
+
   init():void {
     this.binding();
+    this.options.$el.append(this.panel.$main);
+
+    $(this.panel).on('step-change', this.handlePanelStepChange);
+    $(this.panel).on('handles-change', this.handlePanelHandlesChange);
+
     this.view.HandleWrappers.forEach((el: any, i: any) => {
       el.mousedown(this.handle$handleWrappersMousedown.bind(this, i));
     });
+
     this.model.sliderRect = this.setSliderBoundingRect();
     this.model.singleStep = this.model.defineSingleStep(this.model.sliderRect);
     this.model.stepSize = this.model.defineStepSize();
+
     $(window).mousemove(this.handleWindowMousemove);
-    this.scaleEventHandling();
     $(window).mouseup(this.handleWindowMouseup);
+
+    this.scaleEventHandling();
     this.optionsFilter();
     this.initPositions();
+  }
+
+  binding():void {
+    this.handle$handleWrappersMousedown = this.handle$handleWrappersMousedown.bind(this);
+    this.handleWindowMousemove = this.handleWindowMousemove.bind(this);
+    this.handleScaleMousemove = this.handleScaleMousemove.bind(this);
+    this.handleScaleMouseleave = this.handleScaleMouseleave.bind(this);
+    this.handleScaleClick = this.handleScaleClick.bind(this);
+    this.handleWindowMouseup = this.handleWindowMouseup.bind(this);
+    this.handlePanelStepChange = this.handlePanelStepChange.bind(this);
+    this.handlePanelHandlesChange = this.handlePanelHandlesChange.bind(this);
+  }
+
+  handlePanelHandlesChange(e:any) {
+    this.options.handles = e.val;
+    this.model.positions.push(0);
+    this.model.handleSteps.push(0);
+    const i = this.model.positions.length;
+    const val = this.model.getTitleVal(i);
+    this.view.addHandle({ i, val });
+  }
+
+  handlePanelStepChange(e:any) {
+    this.options.step = +e.val;
+    this.model.stepSize = this.model.defineStepSize();
   }
 
   scaleEventHandling():void {
@@ -37,6 +77,7 @@ export class Controller {
     this.model.updatePosition({ pos, i });
     this.view.setHandle({ i, pos });
     this.setTitleVal(i);
+    console.log(this.model.handleSteps[i]);
   }
 
   handleScaleMouseleave(e:any) :void{
@@ -46,15 +87,6 @@ export class Controller {
   handleScaleMousemove(e:any):void {
     const { val, pos, tipPos } = this.model.computePosition({ e });
     this.view.setScaleTipValue({ val, pos: tipPos });
-  }
-
-  binding():void {
-    this.handle$handleWrappersMousedown = this.handle$handleWrappersMousedown.bind(this);
-    this.handleWindowMousemove = this.handleWindowMousemove.bind(this);
-    this.handleScaleMousemove = this.handleScaleMousemove.bind(this);
-    this.handleScaleMouseleave = this.handleScaleMouseleave.bind(this);
-    this.handleScaleClick = this.handleScaleClick.bind(this);
-    this.handleWindowMouseup = this.handleWindowMouseup.bind(this);
   }
 
   optionsFilterCondition(el:any) {

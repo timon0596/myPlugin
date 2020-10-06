@@ -1,13 +1,12 @@
 export class Slider {
   $slider = $('<div>', { class: 'slider' });
 
-  $handleWrappers: any;
+  $handleWrappers= <any>[];
 
-  constructor(amount: number) {
-    this.$handleWrappers = new Array(amount)
-      .fill(null)
-      .map((el) => $('<div>', { class: 'slider__handle-wrapper' }));
-    this.init();
+  constructor(handles:any) {
+    handles.forEach((handle:any, i:number) => {
+      this.addHandle(handle.$handle);
+    });
   }
 
   toVert() {
@@ -22,5 +21,16 @@ export class Slider {
     this.$handleWrappers.map((el: any) => {
       this.$slider.append(el);
     });
+  }
+
+  addHandle(handle:any) {
+    this.$handleWrappers.push($('<div>', { class: 'slider__handle-wrapper' }));
+    const lng = this.$handleWrappers.length;
+    this.$handleWrappers[lng - 1].append(handle);
+    this.$slider.append(this.$handleWrappers[lng - 1]);
+  }
+
+  removeHandle(i:number) {
+    this.$handleWrappers.splice(i, 1);
   }
 }

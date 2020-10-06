@@ -35,4 +35,12 @@ export class Scale {
       this.$delimiters.append($('<div>', { class: 'scale__delimiter' }));
     });
   }
+
+  toVert() {
+    this.$scale.addClass('scale_vertical');
+  }
+
+  toHor() {
+    this.$scale.removeClass('scale_vertical');
+  }
 }
