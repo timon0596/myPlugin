@@ -1,36 +1,23 @@
 export class Slider {
-  $slider = $('<div>', { class: 'slider' });
+  $slider = $("<div>", { class: "slider" });
 
-  $handleWrappers= <any>[];
-
-  constructor(handles:any) {
-    handles.forEach((handle:any, i:number) => {
-      this.addHandle(handle.$handle);
-    });
+  constructor(handles: any) {
+    this.appendHandles(handles);
   }
 
   toVert() {
-    this.$slider.addClass('slider_vertical');
+    this.$slider.addClass("slider_vertical");
   }
 
   toHor() {
-    this.$slider.removeClass('slider_vertical');
+    this.$slider.removeClass("slider_vertical");
   }
-
-  init() {
-    this.$handleWrappers.map((el: any) => {
-      this.$slider.append(el);
+  appendHandles(handles: any) {
+    handles.forEach((el: any) => {
+      this.addHandle(el);
     });
   }
-
-  addHandle(handle:any) {
-    this.$handleWrappers.push($('<div>', { class: 'slider__handle-wrapper' }));
-    const lng = this.$handleWrappers.length;
-    this.$handleWrappers[lng - 1].append(handle);
-    this.$slider.append(this.$handleWrappers[lng - 1]);
-  }
-
-  removeHandle(i:number) {
-    this.$handleWrappers.splice(i, 1);
+  addHandle(handle: any) {
+    this.$slider.append(handle);
   }
 }

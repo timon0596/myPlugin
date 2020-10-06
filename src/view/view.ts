@@ -1,34 +1,36 @@
-import { Slider } from '../slider/slider';
-import { Handle } from '../handle/handle';
-import { Scale } from '../scale/scale';
+import { Slider } from "../slider/slider";
+import { Handle } from "../handle/handle";
+import { Scale } from "../scale/scale";
 
 export class View {
-  private slider:any
+  private slider: any;
 
   private $handles: any;
 
-  private $titles: any;
+  HandleWrappers: any;
 
-  HandleWrappers:any
-
-  Scale = new Scale(this.options)
+  Scale = new Scale(this.options);
 
   constructor(private options: any) {
     this.handlesInit();
-    this.titlesIint();
     this.sliderInit();
     this.handleWrappersInit();
 
-    this.options.$el.append(this.slider.$slider);
+    
 
-    this.Scale.$limits.forEach((el:any, i:number) => {
-      if (typeof this.options.values[0] === 'number') {
+    this.Scale.$limits.forEach((el: any, i: number) => {
+      if (typeof this.options.values[0] === "number") {
         el.text(this.options.values[i]);
       } else {
         const lng = this.options.values.length;
-        i === 0 ? el.text(this.options.values[i]) : el.text(this.options.values[lng - 1]);
+        i === 0
+          ? el.text(this.options.values[i])
+          : el.text(this.options.values[lng - 1]);
       }
     });
+  }
+  get handles() {
+    return this.$handles.map((el: any) => el.$handle);
   }
 
   handlesInit() {
@@ -38,23 +40,28 @@ export class View {
   }
 
   sliderInit() {
-    this.slider = new Slider(this.$handles);
+    this.slider = new Slider(this.handles);
     this.slider.$slider.append(this.Scale.$scale);
+    this.options.$el.append(this.slider.$slider);
     this.options.vertical ? this.slider.toVert() : 0;
   }
 
-  titlesIint() {
-    this.$titles = this.$handles.map((el:any) => el.$title);
+  handlesReinit(){
+    this.handles.forEach((handle:any)=>{
+      handle.remove()
+    })
+    this.handlesInit()
+    this.slider.appendHandles(this.handles)
+
   }
 
   handleWrappersInit() {
     this.HandleWrappers = this.slider.$handleWrappers;
   }
 
-  addHandle({ pos, val }:any) {
+  addHandle({ pos, val }: any) {
     this.$handles.push(new Handle());
     const lng = this.$handles.length;
-    this.$titles.push(this.$handles[lng - 1].$title);
     this.slider.addHandle(this.$handles[lng - 1].$handle);
     const i = lng - 1;
     this.setHandle({ i, pos });
@@ -66,24 +73,24 @@ export class View {
   }
 
   setHandle({ i, pos }: any) {
-    this.HandleWrappers[i].css(
-      this.options.vertical ? 'bottom' : 'left',
-      `${pos}px`,
-    );
+    const indent = this.options.vertical?'bottom':'left'
+    console.log(this.$handles)
+    this.$handles[i].indent({indent,pos})
   }
 
-  setTitleVal({ i, val }:any) {
-    this.$titles[i].text(val);
+  setTitleVal({ i, val }: any) {
+    console.log(this.$handles[i])
+    this.$handles[i].title(val);
   }
 
-  setScaleTipValue({ pos, val }:any) {
+  setScaleTipValue({ pos, val }: any) {
     this.Scale.$tip.show();
     this.Scale.$tip.text(val);
-    this.Scale.$tip.css(this.options.vertical ? 'bottom' : 'left', `${pos}px`);
+    this.Scale.$tip.css(this.options.vertical ? "bottom" : "left", `${pos}px`);
   }
 
   noTitle() {
-    this.$handles.forEach((el:any, i:number) => {
+    this.$handles.forEach((el: any, i: number) => {
       el.noTitle();
     });
   }

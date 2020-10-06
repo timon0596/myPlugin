@@ -1,6 +1,6 @@
-import { Model } from '../model/model';
-import { View } from '../view/view';
-import { InputPanel } from '../inputPanel/inputPanel';
+import { Model } from "../model/model";
+import { View } from "../view/view";
+import { InputPanel } from "../inputPanel/inputPanel";
 
 export class Controller {
   private view = new View(this.options);
@@ -17,20 +17,18 @@ export class Controller {
     this.view.noTitle();
   }
 
-  init():void {
+  init(): void {
     this.binding();
     this.options.$el.append(this.panel.$main);
 
-    $(this.panel).on('step-change', this.handlePanelStepChange);
-    $(this.panel).on('handles-change', this.handlePanelHandlesChange);
-
-    this.view.HandleWrappers.forEach((el: any, i: any) => {
-      el.mousedown(this.handle$handleWrappersMousedown.bind(this, i));
-    });
+    $(this.panel).on("step-change", this.handlePanelStepChange);
+    $(this.panel).on("handles-change", this.handlePanelHandlesChange);
 
     this.model.sliderRect = this.setSliderBoundingRect();
     this.model.singleStep = this.model.defineSingleStep(this.model.sliderRect);
     this.model.stepSize = this.model.defineStepSize();
+
+    this.setHandlesEventHandler();
 
     $(window).mousemove(this.handleWindowMousemove);
     $(window).mouseup(this.handleWindowMouseup);
@@ -40,8 +38,8 @@ export class Controller {
     this.initPositions();
   }
 
-  binding():void {
-    this.handle$handleWrappersMousedown = this.handle$handleWrappersMousedown.bind(this);
+  binding(): void {
+    this.handleHandleMousedown = this.handleHandleMousedown.bind(this);
     this.handleWindowMousemove = this.handleWindowMousemove.bind(this);
     this.handleScaleMousemove = this.handleScaleMousemove.bind(this);
     this.handleScaleMouseleave = this.handleScaleMouseleave.bind(this);
@@ -51,46 +49,66 @@ export class Controller {
     this.handlePanelHandlesChange = this.handlePanelHandlesChange.bind(this);
   }
 
-  handlePanelHandlesChange(e:any) {
-    this.options.handles = e.val;
-    this.model.positions.push(0);
-    this.model.handleSteps.push(0);
-    const i = this.model.positions.length;
-    const val = this.model.getTitleVal(i);
-    this.view.addHandle({ i, val });
+  setHandlesEventHandler() {
+    this.view.handles.forEach((el: any, i: number) => {
+      el.mousedown(this.handleHandleMousedown.bind(this, i));
+    });
   }
 
-  handlePanelStepChange(e:any) {
+  handlePanelHandlesChange(e: any) {
+    if (this.options.handles < e.val) {
+      this.options.handles = e.val;
+      this.model.positions.push(0);
+      this.model.handleSteps.push(0);
+      const i = this.model.positions.length;
+      const val = this.model.getTitleVal(i-1);
+      this.view.addHandle({ i, val });
+    } else {
+      let val = e.val < 1 ? 1 : e.val;
+      this.options.handles = val;
+      this.view.handlesReinit()
+      this.model.positions=this.model.positions.slice(0,this.options.handles)
+      this.model.handleSteps=this.model.handleSteps.slice(0,this.options.handles)
+      this.setHandlesEventHandler();
+      this.model.positions.forEach((pos:number,i:number)=>{
+        this.view.setHandle({pos,i})
+        const val = this.model.getTitleVal(i)
+        this.view.setTitleVal({val,i})
+      })
+
+    }
+  }
+
+  handlePanelStepChange(e: any) {
     this.options.step = +e.val;
     this.model.stepSize = this.model.defineStepSize();
   }
 
-  scaleEventHandling():void {
+  scaleEventHandling(): void {
     $(this.view.Scale.$scale).mousemove(this.handleScaleMousemove);
     $(this.view.Scale.$scale).mouseleave(this.handleScaleMouseleave);
     $(this.view.Scale.$scale).click(this.handleScaleClick);
   }
 
-  handleScaleClick(e:any):void {
+  handleScaleClick(e: any): void {
     const { val, pos, tipPos } = this.model.computePosition({ e });
     const i = this.model.currentHandle;
     this.model.updatePosition({ pos, i });
     this.view.setHandle({ i, pos });
     this.setTitleVal(i);
-    console.log(this.model.handleSteps[i]);
   }
 
-  handleScaleMouseleave(e:any) :void{
+  handleScaleMouseleave(e: any): void {
     this.view.hideScaleTip();
   }
 
-  handleScaleMousemove(e:any):void {
+  handleScaleMousemove(e: any): void {
     const { val, pos, tipPos } = this.model.computePosition({ e });
     this.view.setScaleTipValue({ val, pos: tipPos });
   }
 
-  optionsFilterCondition(el:any) {
-    if (this.model.type === 'number') {
+  optionsFilterCondition(el: any) {
+    if (this.model.type === "number") {
       const condition1 = el >= this.options.values[0];
       const condition2 = el <= this.options.values[1];
       return condition1 && condition2;
@@ -101,7 +119,7 @@ export class Controller {
   optionsFilter() {
     this.options.initialValues = this.options.initialValues
       .slice(0, this.options.handles)
-      .map((el:any, i:number) => {
+      .map((el: any, i: number) => {
         if (this.optionsFilterCondition(el)) {
           return el;
         }
@@ -109,8 +127,8 @@ export class Controller {
       });
   }
 
-  initPositions() :void{
-    this.view.HandleWrappers.map((el:any, i:number) => {
+  initPositions(): void {
+    this.view.handles.map((el: any, i: number) => {
       const val = this.options.initialValues[i];
       if (val !== undefined) {
         this.setHandleWithVal({ val, i });
@@ -122,35 +140,35 @@ export class Controller {
     return this.view.sliderRect();
   }
 
-  handleWindowMousemove(e: any) :void{
+  handleWindowMousemove(e: any): void {
     if (this.model.mousedown) {
       this.setHandle(e);
     }
   }
 
-  handle$handleWrappersMousedown(i: number, e: any) :void{
+  handleHandleMousedown(i: number, e: any): void {
     this.model.currentHandle = i;
     this.model.mousedown = true;
   }
 
-  handleWindowMouseup() :void{
+  handleWindowMouseup(): void {
     this.model.mousedown = false;
   }
 
-  setHandle(e: any) :void{
+  setHandle(e: any): void {
     const i = this.model.currentHandle;
     const pos = this.model.position({ e, i });
     this.view.setHandle({ i, pos });
     this.setTitleVal(i);
   }
 
-  setHandleWithVal({ val, i }:any) :void{
+  setHandleWithVal({ val, i }: any): void {
     const pos = this.model.positionByValue({ val, i });
     this.view.setHandle({ i, pos });
     this.setTitleVal(i);
   }
 
-  setTitleVal(i:number) :void{
+  setTitleVal(i: number): void {
     const val = this.model.getTitleVal(i);
 
     this.view.setTitleVal({ i, val });

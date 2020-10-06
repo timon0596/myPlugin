@@ -33,14 +33,14 @@ $brd: #e3eaa7
 	height: 10px
 	background: $slider
 
-	&__handle-wrapper
+	.handle
 		z-index: 1
 		position: absolute
 		left: 0
 		bottom: -150%
 		transform: translate(-50%, -50%)
 
-	&_vertical &__handle-wrapper
+	&_vertical .handle
 		left: 50%
 		bottom: 0
 		transform: translate(-50%, 50%)
@@ -50,7 +50,6 @@ $brd: #e3eaa7
 		width: 10px
 
 .handle
-	position: relative
 	width: 20px
 	height: 20px	
 	border-radius: 50%
