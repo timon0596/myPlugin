@@ -63,6 +63,7 @@ export class Controller {
       const i = this.model.positions.length;
       const val = this.model.getTitleVal(i-1);
       this.view.addHandle({ i, val });
+      this.setHandlesEventHandler();
     } else {
       let val = e.val < 1 ? 1 : e.val;
       this.options.handles = val;
