@@ -1,25 +1,20 @@
-import { Slider } from "../slider/slider";
-import { Handle } from "../handle/handle";
-import { Scale } from "../scale/scale";
+import { Slider } from '../slider/slider';
+import { Handle } from '../handle/handle';
+import { Scale } from '../scale/scale';
 
 export class View {
   private slider: any;
 
   private $handles: any;
 
-  HandleWrappers: any;
-
   Scale = new Scale(this.options);
 
   constructor(private options: any) {
     this.handlesInit();
     this.sliderInit();
-    this.handleWrappersInit();
-
-    
 
     this.Scale.$limits.forEach((el: any, i: number) => {
-      if (typeof this.options.values[0] === "number") {
+      if (typeof this.options.values[0] === 'number') {
         el.text(this.options.values[i]);
       } else {
         const lng = this.options.values.length;
@@ -29,6 +24,7 @@ export class View {
       }
     });
   }
+
   get handles() {
     return this.$handles.map((el: any) => el.$handle);
   }
@@ -46,20 +42,17 @@ export class View {
     this.options.vertical ? this.slider.toVert() : 0;
   }
 
-  handlesReinit(val:number){
-    this.handles.forEach((handle:any)=>{
-      handle.remove()
-    })
-    const diff = this.options.handles - val
-    for(let i = diff;i>0;i--){
-      this.$handles.pop()
+  handlesReinit(val?:number) {
+    this.handles.forEach((handle:any) => {
+      handle.remove();
+    });
+    if (val !== undefined) {
+      const diff = this.options.handles - val;
+      for (let i = diff; i > 0; i--) {
+        this.$handles.pop();
+      }
     }
-    this.slider.appendHandles(this.handles)
-    console.log(this.$handles)
-  }
-
-  handleWrappersInit() {
-    this.HandleWrappers = this.slider.$handleWrappers;
+    this.slider.appendHandles(this.handles);
   }
 
   addHandle({ pos, val }: any) {
@@ -76,8 +69,17 @@ export class View {
   }
 
   setHandle({ i, pos }: any) {
-    const indent = this.options.vertical?'bottom':'left'
-    this.$handles[i].indent({indent,pos})
+    const indent = this.options.vertical ? 'bottom' : 'left';
+    const oppositIndent = this.options.vertical ? 'left':'bottom';
+    this.$handles[i].indent({ indent, pos });
+    this.$handles[i].indent({ indent:oppositIndent, pos:0 });
+  }
+
+  setHandles(pos:any) {
+    this.handles.forEach((el:any, i:number) => {
+      console.log(pos[i])
+      this.setHandle({ pos: pos[i], i });
+    });
   }
 
   setTitleVal({ i, val }: any) {
@@ -87,7 +89,7 @@ export class View {
   setScaleTipValue({ pos, val }: any) {
     this.Scale.$tip.show();
     this.Scale.$tip.text(val);
-    this.Scale.$tip.css(this.options.vertical ? "bottom" : "left", `${pos}px`);
+    this.Scale.$tip.css(this.options.vertical ? 'bottom' : 'left', `${pos}px`);
   }
 
   noTitle() {
@@ -98,5 +100,15 @@ export class View {
 
   hideScaleTip() {
     this.Scale.$tip.hide();
+  }
+
+  toVert() {
+    this.slider.toVert();
+    this.Scale.toVert();
+  }
+
+  toHor() {
+    this.slider.toHor();
+    this.Scale.toHor();
   }
 }

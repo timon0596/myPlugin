@@ -1,6 +1,6 @@
-import { Model } from "../model/model";
-import { View } from "../view/view";
-import { InputPanel } from "../inputPanel/inputPanel";
+import { Model } from '../model/model';
+import { View } from '../view/view';
+import { InputPanel } from '../inputPanel/inputPanel';
 
 export class Controller {
   private view = new View(this.options);
@@ -21,8 +21,9 @@ export class Controller {
     this.binding();
     this.options.$el.append(this.panel.$main);
 
-    $(this.panel).on("step-change", this.handlePanelStepChange);
-    $(this.panel).on("handles-change", this.handlePanelHandlesChange);
+    $(this.panel).on('step-change', this.handlePanelStepChange);
+    $(this.panel).on('handles-change', this.handlePanelHandlesChange);
+    $(this.panel).on('orientation-change', this.handlePanelOrientationChange);
 
     this.model.sliderRect = this.setSliderBoundingRect();
     this.model.singleStep = this.model.defineSingleStep(this.model.sliderRect);
@@ -47,6 +48,7 @@ export class Controller {
     this.handleWindowMouseup = this.handleWindowMouseup.bind(this);
     this.handlePanelStepChange = this.handlePanelStepChange.bind(this);
     this.handlePanelHandlesChange = this.handlePanelHandlesChange.bind(this);
+    this.handlePanelOrientationChange = this.handlePanelOrientationChange.bind(this);
   }
 
   setHandlesEventHandler() {
@@ -55,28 +57,39 @@ export class Controller {
     });
   }
 
+  handlePanelOrientationChange() {
+    this.options.vertical ? this.view.toVert() : this.view.toHor();
+    this.view.handlesReinit();
+    this.setHandlesEventHandler();
+    this.model.sliderRect = this.setSliderBoundingRect();
+    this.model.singleStep = this.model.defineSingleStep(this.model.sliderRect);
+    this.model.stepSize = this.model.defineStepSize();
+    console.log(this.model.sliderRect)
+    this.model.positions = this.model.positions.map((el:number, i:number) => this.model.handleSteps[i] * this.model.singleStep);
+    this.view.setHandles(this.model.positions);
+  }
+
   handlePanelHandlesChange(e: any) {
     if (this.options.handles < e.val) {
       this.options.handles = e.val;
       this.model.positions.push(0);
       this.model.handleSteps.push(0);
       const i = this.model.positions.length;
-      const val = this.model.getTitleVal(i-1);
+      const val = this.model.getTitleVal(i - 1);
       this.view.addHandle({ i, val });
       this.setHandlesEventHandler();
     } else {
-      let val = e.val < 1 ? 1 : e.val;
-      this.view.handlesReinit(val)
+      const val = e.val < 1 ? 1 : e.val;
+      this.view.handlesReinit(val);
       this.options.handles = val;
-      this.model.positions=this.model.positions.slice(0,this.options.handles)
-      this.model.handleSteps=this.model.handleSteps.slice(0,this.options.handles)
+      this.model.positions = this.model.positions.slice(0, this.options.handles);
+      this.model.handleSteps = this.model.handleSteps.slice(0, this.options.handles);
       this.setHandlesEventHandler();
-      this.model.positions.forEach((pos:number,i:number)=>{
-        this.view.setHandle({pos,i})
-        const val = this.model.getTitleVal(i)
-        this.view.setTitleVal({val,i})
-      })
-
+      this.model.positions.forEach((pos:number, i:number) => {
+        this.view.setHandle({ pos, i });
+        const val = this.model.getTitleVal(i);
+        this.view.setTitleVal({ val, i });
+      });
     }
   }
 
@@ -109,7 +122,7 @@ export class Controller {
   }
 
   optionsFilterCondition(el: any) {
-    if (this.model.type === "number") {
+    if (this.model.type === 'number') {
       const condition1 = el >= this.options.values[0];
       const condition2 = el <= this.options.values[1];
       return condition1 && condition2;

@@ -28,13 +28,21 @@ export class InputPanel {
   binding() {
     this.handleStepChange = this.handleStepChange.bind(this);
     this.handleHandlesChange = this.handleHandlesChange.bind(this);
+    this.handleOrientationChange = this.handleOrientationChange.bind(this);
   }
 
   emitEvents() {
     this.$step.change(this.handleStepChange);
     this.$handles.change(this.handleHandlesChange);
+    this.$orientation.change(this.handleOrientationChange);
   }
 
+  handleOrientationChange(event:any) {
+    this.options.vertical = !this.options.vertical
+    const e:any = $.Event('orientation-change');
+    this.$orientation.attr('checked', this.options.vertical);
+    $(this).trigger(e);
+  }
   handleHandlesChange() {
     const e:any = $.Event('handles-change');
     e.val = this.$handles.val();

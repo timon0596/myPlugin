@@ -28,6 +28,7 @@ export class Model {
   }
 
   defineSingleStep(sliderRect: any): number {
+    this.dimension = this.options.vertical ? 'offsetHeight' : 'offsetWidth'
     if (this.type === 'number') {
       return (
         sliderRect[this.dimension]
