@@ -46,13 +46,16 @@ export class View {
     this.options.vertical ? this.slider.toVert() : 0;
   }
 
-  handlesReinit(){
+  handlesReinit(val:number){
     this.handles.forEach((handle:any)=>{
       handle.remove()
     })
-    this.handlesInit()
+    const diff = this.options.handles - val
+    for(let i = diff;i>0;i--){
+      this.$handles.pop()
+    }
     this.slider.appendHandles(this.handles)
-
+    console.log(this.$handles)
   }
 
   handleWrappersInit() {
@@ -74,12 +77,10 @@ export class View {
 
   setHandle({ i, pos }: any) {
     const indent = this.options.vertical?'bottom':'left'
-    console.log(this.$handles)
     this.$handles[i].indent({indent,pos})
   }
 
   setTitleVal({ i, val }: any) {
-    console.log(this.$handles[i])
     this.$handles[i].title(val);
   }
 

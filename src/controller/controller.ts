@@ -66,8 +66,8 @@ export class Controller {
       this.setHandlesEventHandler();
     } else {
       let val = e.val < 1 ? 1 : e.val;
+      this.view.handlesReinit(val)
       this.options.handles = val;
-      this.view.handlesReinit()
       this.model.positions=this.model.positions.slice(0,this.options.handles)
       this.model.handleSteps=this.model.handleSteps.slice(0,this.options.handles)
       this.setHandlesEventHandler();
