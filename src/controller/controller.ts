@@ -64,7 +64,6 @@ export class Controller {
     this.model.sliderRect = this.setSliderBoundingRect();
     this.model.singleStep = this.model.defineSingleStep(this.model.sliderRect);
     this.model.stepSize = this.model.defineStepSize();
-    console.log(this.model.sliderRect)
     this.model.positions = this.model.positions.map((el:number, i:number) => this.model.handleSteps[i] * this.model.singleStep);
     this.view.setHandles(this.model.positions);
   }

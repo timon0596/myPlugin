@@ -20,8 +20,8 @@ export class Scale {
     this.$scale.append(this.$tip);
     new Array(2).fill(0).forEach(() => { this.$limitsWrapper.append($('<div>', { class: 'scale__limit' })); });
     this.$limits = Array.from(this.$limitsWrapper.find('.scale__limit')).map((el:any) => $(el));
-    this.$limits = vertical ? this.$limits.reverse() : this.$limits;
     this.addDelimiters();
+    this.addLimits();
   }
 
   addDelimiters() {
@@ -42,5 +42,19 @@ export class Scale {
 
   toHor() {
     this.$scale.removeClass('scale_vertical');
+  }
+
+  addLimits() {
+    const limits = this.options.vertical ? this.$limits.slice().reverse() : this.$limits;
+    limits.forEach((el: any, i: number) => {
+      if (typeof this.options.values[0] === 'number') {
+        el.text(this.options.values[i]);
+      } else {
+        const lng = this.options.values.length;
+        i === 0
+          ? el.text(this.options.values[i])
+          : el.text(this.options.values[lng - 1]);
+      }
+    });
   }
 }

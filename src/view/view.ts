@@ -12,17 +12,6 @@ export class View {
   constructor(private options: any) {
     this.handlesInit();
     this.sliderInit();
-
-    this.Scale.$limits.forEach((el: any, i: number) => {
-      if (typeof this.options.values[0] === 'number') {
-        el.text(this.options.values[i]);
-      } else {
-        const lng = this.options.values.length;
-        i === 0
-          ? el.text(this.options.values[i])
-          : el.text(this.options.values[lng - 1]);
-      }
-    });
   }
 
   get handles() {
@@ -70,14 +59,13 @@ export class View {
 
   setHandle({ i, pos }: any) {
     const indent = this.options.vertical ? 'bottom' : 'left';
-    const oppositIndent = this.options.vertical ? 'left':'bottom';
+    const oppositIndent = this.options.vertical ? 'left' : 'bottom';
     this.$handles[i].indent({ indent, pos });
-    this.$handles[i].indent({ indent:oppositIndent, pos:0 });
+    this.$handles[i].indent({ indent: oppositIndent, pos: 0 });
   }
 
   setHandles(pos:any) {
     this.handles.forEach((el:any, i:number) => {
-      console.log(pos[i])
       this.setHandle({ pos: pos[i], i });
     });
   }
@@ -105,10 +93,12 @@ export class View {
   toVert() {
     this.slider.toVert();
     this.Scale.toVert();
+    this.Scale.addLimits();
   }
 
   toHor() {
     this.slider.toHor();
     this.Scale.toHor();
+    this.Scale.addLimits();
   }
 }
