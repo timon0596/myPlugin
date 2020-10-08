@@ -78,6 +78,7 @@ export class View {
     this.Scale.$tip.show();
     this.Scale.$tip.text(val);
     this.Scale.$tip.css(this.options.vertical ? 'bottom' : 'left', `${pos}px`);
+    this.Scale.$tip.css(this.options.vertical ?  'left':'bottom' , 0);
   }
 
   noTitle() {
