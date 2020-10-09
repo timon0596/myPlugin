@@ -1,6 +1,7 @@
 import './index.pug';
 import './plugin/style.sass';
 import './scale/scale.sass';
+import './range/range.sass';
 import './plugin/plugin.ts';
 
 const c: any = [];

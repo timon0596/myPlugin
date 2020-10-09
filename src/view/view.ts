@@ -1,9 +1,12 @@
 import { Slider } from '../slider/slider';
 import { Handle } from '../handle/handle';
 import { Scale } from '../scale/scale';
+import { Range } from '../range/range';
 
 export class View {
   private slider: any;
+
+  private range = new Range(this.options);
 
   private $handles: any;
 
@@ -18,6 +21,10 @@ export class View {
     return this.$handles.map((el: any) => el.$handle);
   }
 
+  setRange(obj:any) {
+    this.range.setRange(obj);
+  }
+
   handlesInit() {
     this.$handles = new Array(this.options.handles)
       .fill(null)
@@ -27,6 +34,7 @@ export class View {
   sliderInit() {
     this.slider = new Slider(this.handles);
     this.slider.$slider.append(this.Scale.$scale);
+    this.slider.$slider.append(this.range.$range);
     this.options.$el.append(this.slider.$slider);
     this.options.vertical ? this.slider.toVert() : 0;
   }
@@ -78,7 +86,7 @@ export class View {
     this.Scale.$tip.show();
     this.Scale.$tip.text(val);
     this.Scale.$tip.css(this.options.vertical ? 'bottom' : 'left', `${pos}px`);
-    this.Scale.$tip.css(this.options.vertical ?  'left':'bottom' , 0);
+    this.Scale.$tip.css(this.options.vertical ? 'left' : 'bottom', 0);
   }
 
   noTitle() {

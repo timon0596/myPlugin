@@ -28,7 +28,7 @@ export class Model {
   }
 
   defineSingleStep(sliderRect: any): number {
-    this.dimension = this.options.vertical ? 'offsetHeight' : 'offsetWidth'
+    this.dimension = this.options.vertical ? 'offsetHeight' : 'offsetWidth';
     if (this.type === 'number') {
       return (
         sliderRect[this.dimension]
@@ -121,5 +121,13 @@ export class Model {
       return Math.round(this.positions[i] / this.singleStep) + this.options.values[0];
     }
     return this.options.values[Math.round(this.positions[i] / this.singleStep)];
+  }
+
+  getRange() {
+    const start = Math.min(...this.positions);
+    const end = Math.max(...this.positions);
+    const length = end - start;
+    console.log({ start, length });
+    return { start, length };
   }
 }

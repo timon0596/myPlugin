@@ -66,9 +66,10 @@ export class Controller {
     this.model.stepSize = this.model.defineStepSize();
     this.model.positions = this.model.positions.map((el:number, i:number) => this.model.handleSteps[i] * this.model.singleStep);
     this.view.setHandles(this.model.positions);
+    this.render();
   }
 
-  handlePanelHandlesChange(e: any) {
+  handlePanelHandlesChange(e: any):void {
     if (this.options.handles < e.val) {
       this.options.handles = e.val;
       this.model.positions.push(0);
@@ -86,8 +87,8 @@ export class Controller {
       this.setHandlesEventHandler();
       this.model.positions.forEach((pos:number, i:number) => {
         this.view.setHandle({ pos, i });
-        const val = this.model.getTitleVal(i);
-        this.view.setTitleVal({ val, i });
+        const value = this.model.getTitleVal(i);
+        this.view.setTitleVal({ val: value, i });
       });
     }
   }
@@ -173,17 +174,23 @@ export class Controller {
     const pos = this.model.position({ e, i });
     this.view.setHandle({ i, pos });
     this.setTitleVal(i);
+    this.render();
   }
 
   setHandleWithVal({ val, i }: any): void {
     const pos = this.model.positionByValue({ val, i });
     this.view.setHandle({ i, pos });
     this.setTitleVal(i);
+    this.render();
   }
 
   setTitleVal(i: number): void {
     const val = this.model.getTitleVal(i);
 
     this.view.setTitleVal({ i, val });
+  }
+
+  render():void {
+    this.view.setRange(this.model.getRange());
   }
 }
