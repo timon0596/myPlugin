@@ -91,6 +91,7 @@ export class Controller {
         this.view.setTitleVal({ val: value, i });
       });
     }
+    this.render();
   }
 
   handlePanelStepChange(e: any) {
@@ -110,6 +111,7 @@ export class Controller {
     this.model.updatePosition({ pos, i });
     this.view.setHandle({ i, pos });
     this.setTitleVal(i);
+    this.render();
   }
 
   handleScaleMouseleave(e: any): void {
